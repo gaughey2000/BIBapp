@@ -1,0 +1,55 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id       Int      @id @default(autoincrement())
+  email         String   @unique
+  password_hash String
+  role          String   @default("admin")
+  created_at    DateTime @default(now())
+}
+
+model Service {
+  service_id   Int       @id @default(autoincrement())
+  name         String
+  description  String?
+  price_cents  Int
+  duration_min Int
+  buffer_min   Int       @default(15)
+  is_active    Boolean   @default(true)
+  Booking      Booking[]
+}
+
+model BusinessHour {
+  id         Int    @id @default(autoincrement())
+  weekday    Int // 0=Sun..6=Sat
+  open_time  String // "10:00"
+  close_time String // "18:00"
+}
+
+model BlackoutSlot {
+  id        Int      @id @default(autoincrement())
+  starts_at DateTime @db.Timestamptz(6)
+  ends_at   DateTime @db.Timestamptz(6)
+  reason    String?
+}
+
+model Booking {
+  booking_id   String   @id @default(uuid())
+  service_id   Int
+  service      Service  @relation(fields: [service_id], references: [service_id], onDelete: Restrict)
+  client_name  String
+  client_email String
+  client_phone String?
+  starts_at    DateTime @db.Timestamptz(6)
+  ends_at      DateTime @db.Timestamptz(6)
+  status       String   @default("confirmed")
+  created_at   DateTime @default(now())
+  cancel_token String?  @unique
+}
