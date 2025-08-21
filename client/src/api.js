@@ -42,3 +42,18 @@ export async function adminLogout() {
     const { data } = await api.post("/api/auth/logout");
     return data;
   }
+
+export async function adminListBlackouts(params = {}) {
+    const { data } = await api.get("/api/admin/blackouts", { params });
+    return data;
+  }
+
+export async function adminCreateBlackout(payload) {
+    const { data } = await api.post("/api/admin/blackouts", payload);
+    return data;
+  }
+
+export async function adminDeleteBlackout(id) {
+    const { data } = await api.delete(`/api/admin/blackouts/${id}`);
+    return data;
+  }

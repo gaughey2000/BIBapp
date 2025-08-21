@@ -6,9 +6,11 @@ import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import { AuthProvider } from "./auth/AuthContext.jsx";
+import UserBookingPage from "./pages/UserBookingPage.jsx";
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
+  { path: "/book", element: <UserBookingPage /> },
   { path: "/admin/login", element: <AdminLogin /> },
   {
     path: "/admin",

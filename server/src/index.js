@@ -371,3 +371,50 @@ app.post("/api/admin/bookings/:id/cancel", requireAdmin, async (req, res) => {
 const PORT = process.env.PORT ?? 4000;
 app.listen(PORT, () => console.log(`API running → http://localhost:${PORT}`));
 
+const BlackoutInput = z.object({
+  starts_at: z.string().datetime(), // ISO (UTC or with TZ)
+  ends_at: z.string().datetime(),
+  reason: z.string().max(200).optional(),
+});
+
+// List blackouts (window)
+app.get("/api/admin/blackouts", requireAdmin, async (req, res) => {
+  const from = req.query.from ? new Date(req.query.from) : new Date(Date.now() - 30*24*60*60*1000);
+  const to   = req.query.to   ? new Date(req.query.to)   : new Date(Date.now() + 60*24*60*60*1000);
+
+  const rows = await prisma.blackoutSlot.findMany({
+    where: { starts_at: { lt: to }, ends_at: { gt: from } }, // any overlap with window
+    orderBy: { starts_at: "asc" }
+  });
+  res.json(rows);
+});
+
+// Create a blackout block
+app.post("/api/admin/blackouts", requireAdmin, async (req, res) => {
+  const parsed = BlackoutInput.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ error: "Invalid input", details: parsed.error.flatten() });
+
+  const starts = new Date(parsed.data.starts_at);
+  const ends   = new Date(parsed.data.ends_at);
+  if (!(starts < ends)) return res.status(400).json({ error: "ends_at must be after starts_at" });
+
+  // Optional: prevent exact duplicates/huge ranges
+  const MAX_DAYS = 30;
+  if ((ends - starts) / (1000*60*60*24) > MAX_DAYS) {
+    return res.status(400).json({ error: `Blackout cannot exceed ${MAX_DAYS} days` });
+  }
+
+  const created = await prisma.blackoutSlot.create({
+    data: { starts_at: starts, ends_at: ends, reason: parsed.data.reason ?? null }
+  });
+  res.status(201).json(created);
+});
+
+// Delete a blackout
+app.delete("/api/admin/blackouts/:id", requireAdmin, async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id)) return res.status(400).json({ error: "Invalid id" });
+
+  await prisma.blackoutSlot.delete({ where: { id } }).catch(() => {});
+  res.json({ ok: true });
+});
