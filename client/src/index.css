@@ -1,68 +1,53 @@
-:root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@import "tailwindcss";
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+/* ---- Brand tokens (safe, plain CSS) ---- */
+:root{
+  --cream: #faf7f2;    /* off‑white / creamy */
+  --rose:  #b76e79;    /* rose gold */
+  --silver:#c7ccd1;    /* soft silver */
+  --ink:   #1f2937;    /* slate-800-ish */
+  --radius-card: 16px;
+}
 
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+/* Base */
+html, body, #root { height: 100%; }
+body {
+  background: var(--cream);
+  color: var(--ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+/* Minimal shared classes (plain CSS so no toolchain warnings) */
+.container-narrow { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; }
+.card {
+  border: 1px solid var(--silver);
+  background: rgba(255,255,255,0.6);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-card);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
-a:hover {
-  color: #535bf2;
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: .5rem 1rem; border-radius: .75rem; font-weight: 500;
+  transition: filter .15s ease, background-color .15s ease;
 }
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--rose) 88%, white 12%), var(--rose));
+}
+.btn-primary:hover { filter: brightness(0.98); }
+.btn-ghost {
+  border: 1px solid var(--silver);
+  background: rgba(255,255,255,0.6);
+}
+.muted { color: #64748b; } /* slate-500/600 vibe */
 
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* Frosted navbar (safe, no at-rules) */
+.nav-frosted {
+  background: color-mix(in oklab, var(--cream) 82%, transparent);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid var(--silver);
 }

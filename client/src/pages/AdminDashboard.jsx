@@ -109,7 +109,6 @@ export default function AdminDashboard() {
       setBos((b) =>
         [...b, created].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at))
       );
-      // keep inputs so you can add multiple; clear reason
       setReason("");
       if (wholeDay) setEndDate(sd);
     } catch (e) {
@@ -129,130 +128,138 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 1100, margin: "0 auto" }}>
+    <div className="container-narrow py-10">
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <h1>Admin — Bookings</h1>
-        <div>
-          {me && <span style={{ marginRight: 12 }}>Signed in as <b>{me.email}</b></span>}
-          <button onClick={doLogout}>Logout</button>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold tracking-tight">Admin — Bookings</h1>
+        <div className="flex items-center gap-3">
+          {me && (
+            <span className="text-slate-600">
+              Signed in as <b>{me.email}</b>
+            </span>
+          )}
+          <button onClick={doLogout} className="btn btn-ghost">Logout</button>
         </div>
       </div>
 
-      {err && <p style={{ color: "crimson" }}>{err}</p>}
+      {err && (
+        <div className="mt-3 card p-3 text-sm text-red-700 bg-red-50/70">
+          {err}
+        </div>
+      )}
 
       {/* Bookings table */}
-      <table border="1" cellPadding="6" style={{ marginTop: 12, width: "100%" }}>
-        <thead>
-          <tr>
-            <th>Service</th>
-            <th>Client</th>
-            <th>Starts</th>
-            <th>Ends</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((r) => (
-            <tr key={r.booking_id}>
-              <td>{r.service?.name}</td>
-              <td>
-                {r.client_name}
-                <br />
-                <small>
-                  {r.client_email}
-                  {r.client_phone ? ` • ${r.client_phone}` : ""}
-                </small>
-              </td>
-              <td>{fmt(r.starts_at)}</td>
-              <td>{fmt(r.ends_at)}</td>
-              <td>{r.status}</td>
-              <td>
-                {r.status === "confirmed" ? (
-                  <button onClick={() => doCancel(r.booking_id)}>Cancel</button>
-                ) : (
-                  "-"
-                )}
-              </td>
+      <div className="card p-4 mt-4 overflow-x-auto">
+        <table className="min-w-full text-sm">
+          <thead className="text-left text-slate-600">
+            <tr className="[&_th]:py-2 [&_th]:pr-3">
+              <th>Service</th>
+              <th>Client</th>
+              <th>Starts</th>
+              <th>Ends</th>
+              <th>Status</th>
+              <th>Action</th>
             </tr>
-          ))}
-          {rows.length === 0 && (
-            <tr>
-              <td colSpan="6">No bookings yet.</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="[&_td]:py-2 [&_td]:pr-3">
+            {rows.map((r) => (
+              <tr key={r.booking_id} className="border-t" style={{ borderColor: "var(--silver)" }}>
+                <td>{r.service?.name}</td>
+                <td>
+                  <div>{r.client_name}</div>
+                  <div className="text-xs text-slate-600">
+                    {r.client_email}
+                    {r.client_phone ? ` • ${r.client_phone}` : ""}
+                  </div>
+                </td>
+                <td>{fmt(r.starts_at)}</td>
+                <td>{fmt(r.ends_at)}</td>
+                <td className="capitalize">{r.status}</td>
+                <td>
+                  {r.status === "confirmed" ? (
+                    <button onClick={() => doCancel(r.booking_id)} className="btn btn-ghost">
+                      Cancel
+                    </button>
+                  ) : (
+                    <span className="text-slate-500">-</span>
+                  )}
+                </td>
+              </tr>
+            ))}
+            {rows.length === 0 && (
+              <tr>
+                <td colSpan="6" className="py-3 text-slate-600">
+                  No bookings yet.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
 
-      <section style={{ marginTop: 24 }}>
-  <h2>Calendar</h2>
-  <p style={{ marginTop: 4 }}>
-    <span style={{ display:"inline-block", width:12, height:12, background:"#0b82f0", marginRight:6 }} /> Bookings
-    <span style={{ display:"inline-block", width:12, height:12, background:"#c62828", margin:"0 6px 0 16px" }} /> Blackouts
-  </p>
+      {/* Calendar */}
+      <section className="mt-6">
+        <h2 className="text-xl font-semibold tracking-tight">Calendar</h2>
+        <p className="mt-1 text-sm text-slate-600">
+          <span className="inline-block w-3 h-3 align-middle mr-1" style={{ background: "#0b82f0" }} /> Bookings
+          <span className="inline-block w-3 h-3 align-middle mx-4" style={{ background: "#c62828" }} /> Blackouts
+        </p>
 
-  <div style={{ marginTop: 8 }}>
-    <FullCalendar
-      plugins={[dayGridPlugin, interactionPlugin]}
-      initialView="dayGridMonth"
-      height="auto"
-      selectable={true}
-      selectMirror={true}
-      longPressDelay={0}
-      // convert your rows/bos to events
-      events={[
-        ...rows.map(r => ({
-          id: r.booking_id,
-          title: `${r.service?.name} — ${r.client_name}`,
-          start: r.starts_at, end: r.ends_at,
-          color: "#0b82f0"
-        })),
-        ...bos.map(b => ({
-          id: `bo-${b.id}`,
-          title: b.reason || "Blackout",
-          start: b.starts_at, end: b.ends_at,
-          color: "#c62828"
-        }))
-      ]}
-      // Drag to select a range to create a blackout
-      select={async (info) => {
-        // info.start/ end are JS Dates in local time
-        const ok = confirm(
-          `Create blackout from ${info.start.toLocaleString("en-GB")} to ${info.end.toLocaleString("en-GB")}?`
-        );
-        if (!ok) return;
-        try {
-          const created = await adminCreateBlackout({
-            starts_at: info.start.toISOString(),
-            ends_at: info.end.toISOString(),
-            reason: "Blocked from calendar"
-          });
-          setBos(b => [...b, created].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)));
-        } catch (e) {
-          alert("Failed to create blackout");
-        }
-      }}
-      // Disable selecting past days
-      selectAllow={(selectInfo) => selectInfo.start >= new Date(new Date().toDateString())}
-      // Simple styling hook
-      eventDisplay="block"
-    />
-  </div>
-</section>
-
-      <hr style={{ margin: "24px 0" }} />
+        <div className="card p-3 mt-2">
+          <FullCalendar
+            plugins={[dayGridPlugin, interactionPlugin]}
+            initialView="dayGridMonth"
+            height="auto"
+            selectable={true}
+            selectMirror={true}
+            longPressDelay={0}
+            events={[
+              ...rows.map(r => ({
+                id: r.booking_id,
+                title: `${r.service?.name} — ${r.client_name}`,
+                start: r.starts_at, end: r.ends_at,
+                color: "#0b82f0"
+              })),
+              ...bos.map(b => ({
+                id: `bo-${b.id}`,
+                title: b.reason || "Blackout",
+                start: b.starts_at, end: b.ends_at,
+                color: "#c62828"
+              }))
+            ]}
+            select={async (info) => {
+              const ok = confirm(
+                `Create blackout from ${info.start.toLocaleString("en-GB")} to ${info.end.toLocaleString("en-GB")}?`
+              );
+              if (!ok) return;
+              try {
+                const created = await adminCreateBlackout({
+                  starts_at: info.start.toISOString(),
+                  ends_at: info.end.toISOString(),
+                  reason: "Blocked from calendar"
+                });
+                setBos(b => [...b, created].sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)));
+              } catch (e) {
+                alert("Failed to create blackout");
+              }
+            }}
+            selectAllow={(selectInfo) => selectInfo.start >= new Date(new Date().toDateString())}
+            eventDisplay="block"
+          />
+        </div>
+      </section>
 
       {/* Blackouts manager */}
-      <section>
-        <h2>Schedule — Blackouts</h2>
-        {bErr && <p style={{ color: "crimson" }}>{bErr}</p>}
+      <section className="mt-6">
+        <h2 className="text-xl font-semibold tracking-tight">Schedule — Blackouts</h2>
+        {bErr && (
+          <div className="mt-2 card p-3 text-sm text-red-700 bg-red-50/70">
+            {bErr}
+          </div>
+        )}
 
-        <form
-          onSubmit={createBlackout}
-          style={{ display: "grid", gap: 8, maxWidth: 620, marginTop: 8 }}
-        >
-          <label style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <form onSubmit={createBlackout} className="mt-3 card p-4 grid gap-3 max-w-xl">
+          <label className="flex items-center gap-2">
             <input
               type="checkbox"
               checked={wholeDay}
@@ -262,12 +269,12 @@ export default function AdminDashboard() {
                 if (chk && startDate) setEndDate(startDate);
               }}
             />
-            Block whole day
+            <span>Block whole day</span>
           </label>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            <label>
-              Start date
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <label className="grid gap-1">
+              <span className="text-sm text-slate-700">Start date</span>
               <input
                 type="date"
                 value={startDate}
@@ -275,33 +282,41 @@ export default function AdminDashboard() {
                   setStartDate(e.target.value);
                   if (wholeDay) setEndDate(e.target.value);
                 }}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
               />
             </label>
-            <label>
-              Start time
+            <label className="grid gap-1">
+              <span className="text-sm text-slate-700">Start time</span>
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
                 disabled={wholeDay}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none disabled:opacity-60 focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
               />
             </label>
-            <label>
-              End date
+            <label className="grid gap-1">
+              <span className="text-sm text-slate-700">End date</span>
               <input
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
                 disabled={wholeDay}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none disabled:opacity-60 focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
               />
             </label>
-            <label>
-              End time
+            <label className="grid gap-1">
+              <span className="text-sm text-slate-700">End time</span>
               <input
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
                 disabled={wholeDay}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none disabled:opacity-60 focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
               />
             </label>
           </div>
@@ -310,43 +325,49 @@ export default function AdminDashboard() {
             placeholder="Reason (optional)"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
+            className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
+            style={{ border: "1px solid var(--silver)" }}
           />
           <div>
-            <button type="submit" disabled={bLoading}>
+            <button type="submit" disabled={bLoading} className="btn btn-primary">
               {bLoading ? "Saving…" : "Add blackout"}
             </button>
           </div>
         </form>
 
-        <table border="1" cellPadding="6" style={{ marginTop: 12, width: "100%" }}>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Starts</th>
-              <th>Ends</th>
-              <th>Reason</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {bos.map((b) => (
-              <tr key={b.id}>
-                <td>{b.id}</td>
-                <td>{fmt(b.starts_at)}</td>
-                <td>{fmt(b.ends_at)}</td>
-                <td>{b.reason || "-"}</td>
-                <td>
-                  <button onClick={() => deleteBlackout(b.id)}>Delete</button>
-                </td>
+        <div className="card p-4 mt-4 overflow-x-auto">
+          <table className="min-w-full text-sm">
+            <thead className="text-left text-slate-600">
+              <tr className="[&_th]:py-2 [&_th]:pr-3">
+                <th>ID</th>
+                <th>Starts</th>
+                <th>Ends</th>
+                <th>Reason</th>
+                <th>Action</th>
               </tr>
-            ))}
-            {bos.length === 0 && (
-              <tr>
-                <td colSpan="5">No blackouts</td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="[&_td]:py-2 [&_td]:pr-3">
+              {bos.map((b) => (
+                <tr key={b.id} className="border-t" style={{ borderColor: "var(--silver)" }}>
+                  <td>{b.id}</td>
+                  <td>{fmt(b.starts_at)}</td>
+                  <td>{fmt(b.ends_at)}</td>
+                  <td>{b.reason || "-"}</td>
+                  <td>
+                    <button onClick={() => deleteBlackout(b.id)} className="btn btn-ghost">
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {bos.length === 0 && (
+                <tr>
+                  <td colSpan="5" className="py-3 text-slate-600">No blackouts</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </section>
     </div>
   );

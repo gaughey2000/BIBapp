@@ -66,7 +66,7 @@ export default function UserBookingPage() {
         client_name: name,
         client_email: email,
         client_phone: phone,
-        starts_at: startsAt
+        starts_at: startsAt // UTC ISO from API
       };
       const data = await createBooking(payload);
       setResult(data);
@@ -79,70 +79,103 @@ export default function UserBookingPage() {
     }
   }
 
+  // Success screen
   if (step === 4 && result) {
     return (
-      <div style={{ padding: 24 }}>
-        <h1>Booking confirmed ✅</h1>
-        <p><b>Starts:</b> {new Date(result.starts_at).toLocaleString("en-GB")}</p>
-        <p><b>Ends:</b> {new Date(result.ends_at).toLocaleString("en-GB")}</p>
-        <p><b>Your cancel token (save this):</b></p>
-        <code>{result.cancel_token}</code>
+      <div className="container-narrow py-10">
+        <div className="max-w-xl mx-auto card p-6">
+          <h1 className="text-2xl font-semibold tracking-tight">Booking confirmed ✅</h1>
+          <p className="mt-3"><b>Starts:</b> {new Date(result.starts_at).toLocaleString("en-GB")}</p>
+          <p className="mt-1"><b>Ends:</b> {new Date(result.ends_at).toLocaleString("en-GB")}</p>
+          <p className="mt-4 text-sm text-slate-600"><b>Your cancel token (save this):</b></p>
+          <code className="mt-2 block rounded-lg bg-white/70 px-3 py-2 overflow-x-auto" style={{ border: "1px solid var(--silver)" }}>
+            {result.cancel_token}
+          </code>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ padding: 24, maxWidth: 600 }}>
-      <h1>BIB — Book an appointment</h1>
-      {err && <p style={{ color: "crimson" }}>{err}</p>}
+    <div className="container-narrow py-10">
+      <h1 className="text-3xl font-semibold tracking-tight">Book an appointment</h1>
+      {err && (
+        <div className="mt-3 card p-3 text-sm text-red-700 bg-red-50/70">
+          {err}
+        </div>
+      )}
 
       {/* Step 1: pick service */}
-      <section style={{ marginTop: 16, border: "1px solid #eee", padding: 12 }}>
-        <h2>1) Choose a service</h2>
-        <select value={serviceId} onChange={e => setServiceId(e.target.value)}>
-          <option value="">-- select --</option>
-          {services.map(s => (
-            <option key={s.service_id} value={s.service_id}>
-              {s.name} — £{toGBP(s.price_cents)} — {s.duration_min} min
-            </option>
-          ))}
-        </select>
-        <button disabled={!serviceId} style={{ marginLeft: 8 }} onClick={() => setStep(2)}>Next</button>
+      <section className="mt-6 card p-5">
+        <h2 className="text-xl font-semibold tracking-tight">1) Choose a service</h2>
+        <div className="mt-3 flex items-center gap-3">
+          <select
+            className="w-full rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
+            style={{ border: "1px solid var(--silver)" }}
+            value={serviceId}
+            onChange={e => setServiceId(e.target.value)}
+          >
+            <option value="">-- select --</option>
+            {services.map(s => (
+              <option key={s.service_id} value={s.service_id}>
+                {s.name} — £{toGBP(s.price_cents)} — {s.duration_min} min
+              </option>
+            ))}
+          </select>
+          <button
+            disabled={!serviceId}
+            onClick={() => setStep(2)}
+            className="btn btn-primary disabled:opacity-60"
+          >
+            Next
+          </button>
+        </div>
       </section>
 
       {/* Step 2: date → time */}
       {step >= 2 && (
-        <section style={{ marginTop: 16, border: "1px solid #eee", padding: 12 }}>
-          <h2>2) Pick date & time</h2>
+        <section className="mt-6 card p-5">
+          <h2 className="text-xl font-semibold tracking-tight">2) Pick date & time</h2>
 
-          <DayPicker
-            mode="single"
-            selected={date ? ymdToLocalDate(date) : undefined}
-            onSelect={(d) => {
-              const ymd = d ? toYMDLocal(d) : "";
-              setDate(ymd);
-              setStartsAt("");
-              setSlots([]);
-            }}
-            disabled={{ dayOfWeek: [0] }}
-            fromDate={new Date()}
-          />
+          <div className="mt-3">
+            <DayPicker
+              mode="single"
+              selected={date ? ymdToLocalDate(date) : undefined}
+              onSelect={(d) => {
+                const ymd = d ? toYMDLocal(d) : "";
+                setDate(ymd);
+                setStartsAt("");
+                setSlots([]);
+              }}
+              disabled={{ dayOfWeek: [0] }}   // Sunday closed
+              fromDate={new Date()}          // block past
+            />
+          </div>
 
-          <button onClick={loadAvailability} disabled={!date} style={{ marginTop: 8 }}>
+          <button
+            onClick={loadAvailability}
+            disabled={!date}
+            className="mt-3 btn btn-ghost disabled:opacity-60"
+          >
             Load times
           </button>
 
-          {loading && <p>Loading…</p>}
+          {loading && <p className="mt-2 text-slate-600">Loading…</p>}
+
           {!!slots.length && (
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 8, marginTop: 12 }}>
+            <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
               {slots.map(iso => (
                 <button
                   key={iso}
                   onClick={() => setStartsAt(iso)}
+                  className={`btn ${
+                    startsAt === iso
+                      ? "ring-2"
+                      : "btn-ghost"
+                  }`}
                   style={{
-                    padding: 8,
-                    border: startsAt === iso ? "2px solid #000" : "1px solid #ccc",
-                    borderRadius: 6
+                    // subtle rose focus ring when selected
+                    boxShadow: startsAt === iso ? "0 0 0 2px rgba(183,110,121,.4)" : undefined
                   }}
                 >
                   {formatTime(iso)}
@@ -150,25 +183,59 @@ export default function UserBookingPage() {
               ))}
             </div>
           )}
-          {!loading && date && slots.length === 0 && <p>No slots for this date.</p>}
 
-          <div style={{ marginTop: 8 }}>
-            <button disabled={!startsAt} onClick={() => setStep(3)}>Next</button>
+          {!loading && date && slots.length === 0 && (
+            <p className="mt-2 text-slate-600">No slots for this date.</p>
+          )}
+
+          <div className="mt-3">
+            <button
+              disabled={!startsAt}
+              onClick={() => setStep(3)}
+              className="btn btn-primary disabled:opacity-60"
+            >
+              Next
+            </button>
           </div>
         </section>
       )}
 
       {/* Step 3: details */}
       {step >= 3 && (
-        <section style={{ marginTop: 16, border: "1px solid #eee", padding: 12 }}>
-          <h2>3) Your details</h2>
-          <form onSubmit={submitBooking}>
-            <div style={{ display: "grid", gap: 8 }}>
-              <input required placeholder="Full name" value={name} onChange={e => setName(e.target.value)} />
-              <input required type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
-              <input placeholder="Phone" value={phone} onChange={e => setPhone(e.target.value)} />
+        <section className="mt-6 card p-5">
+          <h2 className="text-xl font-semibold tracking-tight">3) Your details</h2>
+          <form onSubmit={submitBooking} className="mt-3">
+            <div className="grid gap-3">
+              <input
+                required
+                placeholder="Full name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
+              />
+              <input
+                required
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
+              />
+              <input
+                placeholder="Phone"
+                value={phone}
+                onChange={e => setPhone(e.target.value)}
+                className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
+                style={{ border: "1px solid var(--silver)" }}
+              />
             </div>
-            <button type="submit" disabled={!name || !email || !startsAt} style={{ marginTop: 12 }}>
+            <button
+              type="submit"
+              disabled={!name || !email || !startsAt || loading}
+              className="mt-3 btn btn-primary disabled:opacity-60"
+            >
               {loading ? "Submitting…" : "Confirm booking"}
             </button>
           </form>
