@@ -7,6 +7,7 @@ import UserBookingPage from "./pages/UserBookingPage.jsx";
 import AdminLogin from "./pages/AdminLogin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import ServicesPage from "./pages/ServicesPage.jsx";
+import ServiceDetailPage from "./pages/ServiceDetailPage.jsx";
 import ContactPage from "./pages/ContactPage.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
       { path: "book", element: <UserBookingPage /> },
       { path: "/about", element: <AboutPage /> },
       { path: "/services", element: <ServicesPage /> },
+      { path: "/services/:id", element: <ServiceDetailPage /> },
       { path: "/contact", element: <ContactPage /> },
       { path: "admin/login", element: <AdminLogin /> },
       {

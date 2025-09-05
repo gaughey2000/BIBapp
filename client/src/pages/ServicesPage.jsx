@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import { fetchServices } from "../api";
+import { Link } from "react-router-dom";
 
 function toGBP(cents) {
   return (cents / 100).toFixed(2);
@@ -56,6 +56,7 @@ export default function ServicesPage() {
                     £{toGBP(s.price_cents)}
                   </p>
                 </div>
+                <Link to={`/services/${s.service_id}`}>More info</Link>
               </div>
             ))}
             {!err && services.length === 0 && (

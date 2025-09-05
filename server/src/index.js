@@ -102,6 +102,17 @@ app.get("/api/services", async (_req, res) => {
   res.json(services);
 });
 
+// Public: get one service
+app.get("/api/services/:id", async (req, res) => {
+  const id = Number(req.params.id);
+  if (!Number.isInteger(id) || id <= 0) {
+    return res.status(400).json({ error: "Invalid service id" });
+  }
+  const s = await prisma.service.findUnique({ where: { service_id: id } });
+  if (!s || !s.is_active) return res.status(404).json({ error: "Not found" });
+  res.json(s);
+});
+
 // placeholders for next steps
 app.get("/api/availability", async (req, res) => {
     try {

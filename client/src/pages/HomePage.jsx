@@ -148,6 +148,9 @@ export default function HomePage() {
                     {s.buffer_min ? ` (+${s.buffer_min})` : ""}
                   </p>
                   <p className="mt-1 font-semibold">{toGBP(s.price_cents)}</p>
+                  <Link to={`/services/${s.service_id}`} className="mt-2 inline-block btn btn-ghost w-full">
+                    More info
+                  </Link>
                   <Link to="/book" className="mt-4 btn btn-primary w-full">
                     Book this
                   </Link>

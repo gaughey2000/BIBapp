@@ -15,16 +15,18 @@ export default function ServiceDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let alive = true;
     (async () => {
       try {
         const data = await fetchService(id);
-        setSvc(data);
+        if (alive) setSvc(data);
       } catch (e) {
-        setErr(e?.response?.data?.error || "Failed to load service");
+        if (alive) setErr(e?.response?.data?.error || "Failed to load service");
       } finally {
-        setLoading(false);
+        if (alive) setLoading(false);
       }
     })();
+    return () => { alive = false; };
   }, [id]);
 
   if (loading) {
@@ -50,31 +52,47 @@ export default function ServiceDetailPage() {
 
   if (!svc) return null;
 
+  // Handle snake_case or camelCase just in case
+  const more = (svc.more_info ?? svc.moreInfo ?? "").trim();
+
   return (
     <div className="container-narrow py-12 grid md:grid-cols-2 gap-10 items-start">
+      {/* Text */}
       <div className="order-2 md:order-1">
         <h1 className="text-3xl font-semibold tracking-tight">{svc.name}</h1>
-        <p className="mt-2 text-slate-700">
+
+        <p className="mt-3 text-slate-700">
           {svc.description || "This treatment provides natural, elegant results by a qualified aesthetics nurse."}
         </p>
 
         <div className="mt-6 grid gap-2 text-slate-800">
-          <div><span className="font-medium">Duration:</span> {svc.duration_min} min{svc.buffer_min ? ` (+${svc.buffer_min} buffer)` : ""}</div>
-          <div><span className="font-medium">Price:</span> {toGBP(svc.price_cents)}</div>
+          <div>
+            <span className="font-medium">Duration:</span>{" "}
+            {svc.duration_min} min{svc.buffer_min ? ` (+${svc.buffer_min} buffer)` : ""}
+          </div>
+          <div>
+            <span className="font-medium">Price:</span> {toGBP(svc.price_cents)}
+          </div>
         </div>
 
+        {more && (
+          <section className="mt-8 card p-5">
+            <h2 className="text-xl font-semibold text-[color:var(--rose)]">More information</h2>
+            <div className="mt-3 text-slate-700 whitespace-pre-line">
+              {more}
+            </div>
+          </section>
+        )}
+
         <div className="mt-6 flex gap-3">
-          <Link
-            to={`/book?serviceId=${svc.service_id}`}
-            className="btn btn-primary"
-          >
+          <Link to={`/book?serviceId=${svc.service_id}`} className="btn btn-primary">
             Book this service
           </Link>
           <Link to="/services" className="btn btn-ghost">All services</Link>
         </div>
       </div>
 
-      {/* Visual (swap for a specific photo per service later if you like) */}
+      {/* Visual */}
       <div className="order-1 md:order-2">
         <img
           src="/NurseClientConsultation.jpg"

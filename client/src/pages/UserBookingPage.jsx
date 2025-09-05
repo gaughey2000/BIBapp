@@ -23,6 +23,8 @@ function ymdToLocalDate(ymd) {
 }
 
 export default function UserBookingPage() {
+  const [searchParams] = useSearchParams();
+  const initialServiceId = searchParams.get("serviceId") || "";
   const [step, setStep] = useState(1);
   const [services, setServices] = useState([]);
   const [serviceId, setServiceId] = useState("");

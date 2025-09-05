@@ -24,6 +24,7 @@ model Service {
   buffer_min   Int       @default(15)
   is_active    Boolean   @default(true)
   Booking      Booking[]
+  more_info    String?  @db.Text
 }
 
 model BusinessHour {
