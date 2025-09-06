@@ -1,16 +1,22 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom"; 
 import { fetchServices, fetchAvailability, createBooking } from "../api";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
 function toGBP(cents) {
-  return (cents / 100).toFixed(2);
+  const n = Number(cents) || 0;
+  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n / 100);
 }
 function formatTime(iso) {
-  return new Date(iso).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+  return new Date(iso).toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false, // 24h
+  });
 }
 
-// Local date helpers (avoid UTC shift issues)
+// Local date helpers
 function toYMDLocal(d) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -25,11 +31,12 @@ function ymdToLocalDate(ymd) {
 export default function UserBookingPage() {
   const [searchParams] = useSearchParams();
   const initialServiceId = searchParams.get("serviceId") || "";
+
   const [step, setStep] = useState(1);
-  const [services, setServices] = useState([]);
-  const [serviceId, setServiceId] = useState("");
-  const [date, setDate] = useState(""); // YYYY-MM-DD (local)
-  const [slots, setSlots] = useState([]);
+  const [services, setServices] = useState([]);    
+  const [serviceId, setServiceId] = useState(initialServiceId);
+  const [date, setDate] = useState("");               // YYYY-MM-DD
+  const [slots, setSlots] = useState([]);             // array of ISO strings
   const [startsAt, setStartsAt] = useState("");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -39,8 +46,24 @@ export default function UserBookingPage() {
   const [err, setErr] = useState("");
 
   useEffect(() => {
-    fetchServices().then(setServices).catch(e => setErr(e.message));
-  }, []);
+    let cancel = false;
+    (async () => {
+      try {
+        const list = await fetchServices();           // should return array
+        if (!cancel) {
+          setServices(Array.isArray(list) ? list : []);
+          // If a serviceId was given in URL, keep it only if it exists
+          if (initialServiceId && list.some(s => String(s.service_id) === String(initialServiceId))) {
+            setServiceId(String(initialServiceId));
+          }
+        }
+      } catch (e) {
+        if (!cancel) setErr(e.message || "Failed to load services");
+      }
+    })();
+    return () => { cancel = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialServiceId]);
 
   async function loadAvailability() {
     setErr("");
@@ -50,7 +73,7 @@ export default function UserBookingPage() {
     setLoading(true);
     try {
       const data = await fetchAvailability(serviceId, date);
-      setSlots(data);
+      setSlots(Array.isArray(data) ? data : []);
     } catch (e) {
       setErr("Failed to load availability");
     } finally {
@@ -68,20 +91,20 @@ export default function UserBookingPage() {
         client_name: name,
         client_email: email,
         client_phone: phone,
-        starts_at: startsAt // UTC ISO from API
+        starts_at: startsAt, // UTC ISO from API
       };
       const data = await createBooking(payload);
       setResult(data);
       setStep(4);
     } catch (e) {
-      const msg = e?.response?.data?.error || "Booking failed";
+      const msg = e?.response?.data?.error || e.message || "Booking failed";
       setErr(msg);
     } finally {
       setLoading(false);
     }
   }
 
-  // Success screen
+  // Success
   if (step === 4 && result) {
     return (
       <div className="container-narrow py-10">
@@ -97,6 +120,8 @@ export default function UserBookingPage() {
       </div>
     );
   }
+
+  const serviceList = Array.isArray(services) ? services : [];
 
   return (
     <div className="container-narrow py-10">
@@ -118,9 +143,9 @@ export default function UserBookingPage() {
             onChange={e => setServiceId(e.target.value)}
           >
             <option value="">-- select --</option>
-            {services.map(s => (
+            {serviceList.map(s => (
               <option key={s.service_id} value={s.service_id}>
-                {s.name} — £{toGBP(s.price_cents)} — {s.duration_min} min
+                {s.name} — {toGBP(s.price_cents)} — {s.duration_min} min
               </option>
             ))}
           </select>
@@ -149,7 +174,7 @@ export default function UserBookingPage() {
                 setStartsAt("");
                 setSlots([]);
               }}
-              disabled={{ dayOfWeek: [0] }}   // Sunday closed
+              disabled={{ dayOfWeek: [0] }} // Sunday closed (adjust if needed)
               fromDate={new Date()}          // block past
             />
           </div>
@@ -170,15 +195,8 @@ export default function UserBookingPage() {
                 <button
                   key={iso}
                   onClick={() => setStartsAt(iso)}
-                  className={`btn ${
-                    startsAt === iso
-                      ? "ring-2"
-                      : "btn-ghost"
-                  }`}
-                  style={{
-                    // subtle rose focus ring when selected
-                    boxShadow: startsAt === iso ? "0 0 0 2px rgba(183,110,121,.4)" : undefined
-                  }}
+                  className={`btn ${startsAt === iso ? "ring-2" : "btn-ghost"}`}
+                  style={{ boxShadow: startsAt === iso ? "0 0 0 2px rgba(183,110,121,.4)" : undefined }}
                 >
                   {formatTime(iso)}
                 </button>

@@ -1,14 +1,49 @@
-import { Link } from "react-router-dom";
+// client/src/App.jsx
+import { Routes, Route } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+// Public pages
+import HomePage from "./pages/HomePage";
+import ServicesPage from "./pages/ServicesPage";
+import ServiceDetailPage from "./pages/ServiceDetailPage";
+import UserBookingPage from "./pages/UserBookingPage";
+import ContactPage from "./pages/ContactPage";
+import AboutPage from "./pages/AboutPage";
+
+// Admin pages
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+
+// Fallback
+function NotFound() {
+  return <div style={{ padding: 24 }}><h2>Page not found</h2></div>;
+}
 
 export default function App() {
   return (
-    <div style={{ padding: 24 }}>
-      <h1>BIB Clinic</h1>
-      <p>Welcome! You can book an appointment or sign in as admin.</p>
-      <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
-        <Link to="/book"><button>Book now</button></Link>
-        <Link to="/admin/login"><button>Admin login</button></Link>
-      </div>
-    </div>
+    <>
+      <Navbar /> 
+      <Routes>
+        {/* Public */}
+        <Route path="/" element={<HomePage />} />
+        <Route path="/services" element={<ServicesPage />} />
+        <Route path="/services/:id" element={<ServiceDetailPage />} />
+        <Route path="/book" element={<UserBookingPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/about" element={<AboutPage />} />
+
+        {/* Auth */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+
+        {/* Protected admin */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Route>
+
+        {/* 404 */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </>
   );
 }

@@ -1,40 +1,63 @@
 import { useRef, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { fetchServices } from "../api";
+import { api } from "../api"; // ⬅️ use the api helper you already have
 
 function toGBP(cents) {
   return new Intl.NumberFormat("en-GB", {
     style: "currency",
     currency: "GBP",
-  }).format(cents / 100);
+  }).format((Number(cents) || 0) / 100);
 }
 
 export default function HomePage() {
-  const [services, setServices] = useState([]);
+  const [services, setServices] = useState([]);  // always an array
   const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState("");
+  const [error, setError] = useState("");
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
 
+  const toggleMute = () => setMuted((m) => !m);
+
+  // Try to autoplay the video when ready (browsers only allow autoplay when muted)
   useEffect(() => {
-    (async () => {
-      try {
-        const data = await fetchServices();
-        setServices(data.slice(0, 3));
-      } catch {
-        setErr("Could not load services");
-      } finally {
-        setLoading(false);
-      }
-    })();
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = true;
+    const p = v.play?.();
+    if (p && typeof p.catch === "function") p.catch(() => {});
   }, []);
 
-  function toggleMute() {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setMuted(!muted);
-    }
-  }
+  useEffect(() => {
+    let cancel = false;
+    (async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await api.get("/services");
+        const data = res?.data;
+
+        const list = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.services)
+          ? data.services
+          : [];
+
+        if (!cancel) setServices(list);
+
+        if (!Array.isArray(data) && !Array.isArray(data?.services)) {
+          console.warn("Unexpected /services shape:", data);
+        }
+      } catch (e) {
+        if (!cancel) setError(e.message || "Failed to load services");
+      } finally {
+        if (!cancel) setLoading(false);
+      }
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, []);
 
   return (
     <>
@@ -106,7 +129,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {err && <p className="mt-4 text-sm text-red-600">{err}</p>}
+          {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
 
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {loading &&
@@ -114,41 +137,32 @@ export default function HomePage() {
                 <div key={i} className="card p-5 animate-pulse">
                   <div
                     className="h-6 w-2/3 rounded"
-                    style={{
-                      background:
-                        "color-mix(in oklab, var(--silver) 30%, transparent)",
-                    }}
+                    style={{ background: "color-mix(in oklab, var(--silver) 30%, transparent)" }}
                   />
                   <div
                     className="mt-3 h-4 w-1/3 rounded"
-                    style={{
-                      background:
-                        "color-mix(in oklab, var(--silver) 30%, transparent)",
-                    }}
+                    style={{ background: "color-mix(in oklab, var(--silver) 30%, transparent)" }}
                   />
                   <div
                     className="mt-5 h-10 w-full rounded"
-                    style={{
-                      background:
-                        "color-mix(in oklab, var(--silver) 30%, transparent)",
-                    }}
+                    style={{ background: "color-mix(in oklab, var(--silver) 30%, transparent)" }}
                   />
                 </div>
               ))}
 
             {!loading &&
-              services.map((s) => (
-                <article
-                  key={s.service_id}
-                  className="card p-5 hover:shadow transition"
-                >
+              (Array.isArray(services) ? services : []).map((s) => (
+                <article key={s.service_id} className="card p-5 hover:shadow transition">
                   <h3 className="text-lg font-medium">{s.name}</h3>
                   <p className="mt-1 text-sm text-slate-600">
                     Duration: {s.duration_min} min
                     {s.buffer_min ? ` (+${s.buffer_min})` : ""}
                   </p>
                   <p className="mt-1 font-semibold">{toGBP(s.price_cents)}</p>
-                  <Link to={`/services/${s.service_id}`} className="mt-2 inline-block btn btn-ghost w-full">
+                  <Link
+                    to={`/services/${s.service_id}`}
+                    className="mt-2 inline-block btn btn-ghost w-full"
+                  >
                     More info
                   </Link>
                   <Link to="/book" className="mt-4 btn btn-primary w-full">
