@@ -1,0 +1,7 @@
+{
+    "name": "bib-root",
+    "private": true,
+    "scripts": {
+      "test": "npm -C server test && npm -C client test"
+    }
+  }
