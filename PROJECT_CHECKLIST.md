@@ -11,27 +11,27 @@ X **Checkpoint:** Starting server with missing env should throw an error. X
 ---
 
 ## Phase 2 – Frontend Auth Persistence (≈1.5 hrs)
-- [ ] In `AuthProvider`, call `/api/auth/me` on mount
-- [ ] Set `authed=true` if 200, `false` otherwise
-- [ ] Update `ProtectedRoute` to wait for auth state before rendering
+- [ x ] In `AuthProvider`, call `/api/auth/me` on mount
+- [ x ] Set `authed=true` if 200, `false` otherwise
+- [ x ] Update `ProtectedRoute` to wait for auth state before rendering
 
-**Checkpoint:** Log in → refresh page → still in Admin Dashboard.
+X **Checkpoint:** Log in → refresh page → still in Admin Dashboard. X
 
 ---
 
 ## Phase 3 – Tests Scaffold (≈5 hrs)
 
 ### Back end (Jest + Supertest)
-- [ ] Test `GET /health` → 200
-- [ ] Test `POST /api/auth/login` (seeded admin) → 200 + cookie
-- [ ] Test `GET /api/services` → returns array
-- [ ] Test `POST /api/bookings` with invalid payload → 400
+- [ x ] Test `GET /health` → 200
+- [ x ] Test `POST /api/auth/login` (seeded admin) → 200 + cookie
+- [ x ] Test `GET /api/services` → returns array
+- [ x ] Test `POST /api/bookings` with invalid payload → 400
 
 ### Front end (Vitest + RTL)
-- [ ] Test HomePage renders mock services
-- [ ] Test Admin login form shows error on bad creds
+- [ x ] Test HomePage renders mock services
+- [ x ] Test Admin login form shows error on bad creds
 
-**Checkpoint:** `npm test` runs both FE + BE and all tests pass.
+X **Checkpoint:** `npm test` runs both FE + BE and all tests pass. X
 
 ---
 
