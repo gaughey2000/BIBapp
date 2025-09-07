@@ -38,8 +38,8 @@ X **Checkpoint:** `npm test` runs both FE + BE and all tests pass. X
 ## Phase 4 – Deployment to Render (≈3–4 hrs)
 
 ### Back end
-- [ ] Add `npm run prisma:deploy` → `prisma migrate deploy`
-- [ ] Ensure `npm start` launches server
+- [ x ] Add `npm run prisma:deploy` → `prisma migrate deploy`
+- [ x ] Ensure `npm start` launches server
 - [ ] Set envs on Render (`DATABASE_URL`, `JWT_SECRET`, `CLIENT_URL`, `NODE_ENV=production`)
 
 ### Front end
