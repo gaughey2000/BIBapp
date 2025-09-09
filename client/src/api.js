@@ -4,8 +4,8 @@ import axios from "axios";
 const root = import.meta.env.VITE_API_URL ?? window.location.origin;
 
 export const api = axios.create({
-  baseURL: root.replace(/\/$/, "") + "/api", // ⬅️ always append /api
-  withCredentials: true,
+  baseURL: base,
+  withCredentials: true,  
 });
 
 // Public: list all active services
