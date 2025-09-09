@@ -1,16 +1,20 @@
 // client/src/api.js
 import axios from "axios";
 
-const root = import.meta.env.VITE_API_URL ?? window.location.origin;
+// Normalize and default to your server's /api
+const base =
+  (import.meta.env.VITE_API_URL?.replace(/\/+$/, "")) ||
+  (window.location.origin.replace(/\/+$/, "") + "/api");
 
 export const api = axios.create({
   baseURL: base,
-  withCredentials: true,  
+  withCredentials: true, // keep cookies for /auth/*
+  headers: { "Content-Type": "application/json" },
 });
 
 // Public: list all active services
 export async function fetchServices() {
-  const { data } = await api.get("/services"); // ⬅️ no /api here
+  const { data } = await api.get("/services");
   return data;
 }
 
@@ -24,46 +28,43 @@ export async function createBooking(payload) {
   return data;
 }
 
+// Auth
 export async function adminLogin(email, password) {
   const { data } = await api.post("/auth/login", { email, password });
   return data;
 }
-
 export async function whoAmI() {
   const { data } = await api.get("/auth/me");
   return data;
 }
-
-export async function fetchAdminBookings(params = {}) {
-  const { data } = await api.get("/admin/bookings", { params });
-  return data;
-}
-
-export async function adminCancel(booking_id) {
-  const { data } = await api.post(`/admin/bookings/${booking_id}/cancel`);
-  return data;
-}
-
 export async function adminLogout() {
   const { data } = await api.post("/auth/logout");
   return data;
 }
 
+// Admin
+export async function fetchAdminBookings(params = {}) {
+  const { data } = await api.get("/admin/bookings", { params });
+  return data;
+}
+export async function adminCancel(booking_id) {
+  const { data } = await api.post(`/admin/bookings/${booking_id}/cancel`);
+  return data;
+}
 export async function adminListBlackouts(params = {}) {
   const { data } = await api.get("/admin/blackouts", { params });
   return data;
 }
-
 export async function adminCreateBlackout(payload) {
   const { data } = await api.post("/admin/blackouts", payload);
   return data;
 }
-
 export async function adminDeleteBlackout(id) {
   const { data } = await api.delete(`/admin/blackouts/${id}`);
   return data;
 }
 
+// Public: single service
 export async function fetchService(id) {
   const { data } = await api.get(`/services/${id}`);
   return data;
