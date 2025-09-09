@@ -1,20 +1,17 @@
-// server/src/middleware/cors.js
 import cors from "cors";
 
 const allowedOrigins = [
-  process.env.CLIENT_URL,          // e.g. https://bibapp-lmpj.onrender.com
-  "http://localhost:5173",         // dev
-].filter(Boolean);
+  "http://localhost:5173",
+  "https://bibapp-lmpj.onrender.com", // Render FE
+];
 
 export const corsMiddleware = cors({
-  origin(origin, callback) {
-    // allow same-origin or server-to-server (no origin header)
-    if (!origin || allowedOrigins.includes(origin)) {
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow curl / server-side
+    if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
-    return callback(new Error(`CORS: origin not allowed -> ${origin}`));
+    return callback(new Error("Not allowed by CORS"));
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
 });
