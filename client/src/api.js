@@ -67,3 +67,15 @@ export async function fetchAdminBookings({ from, to } = {}) {
 export async function adminCancel(bookingId) {
   return fetch(`${BASE}/api/admin/bookings/${bookingId}/cancel`, withOpts("POST")).then(json);
 }
+export async function adminListBlackouts({ from, to } = {}) {
+  const url = new URL(`${BASE}/api/admin/blackouts`);
+  if (from) url.searchParams.set("from", from);
+  if (to) url.searchParams.set("to", to);
+  return fetch(url, withOpts()).then(json);
+}
+export async function adminCreateBlackout(input) {
+  return fetch(`${BASE}/api/admin/blackouts`, withOpts("POST", input)).then(json);
+}
+export async function adminDeleteBlackout(id) {
+  return fetch(`${BASE}/api/admin/blackouts/${id}`, withOpts("DELETE")).then(json);
+}
