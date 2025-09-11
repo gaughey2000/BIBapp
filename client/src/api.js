@@ -55,3 +55,6 @@ export const api = {
     deleteBlackout: (id) => post(`/api/admin/blackouts/${id}`, {}, { method: "DELETE" }),
   },
 };
+
+export const whoAmI = () => api.me();
+export const adminLogout = () => api.logout();
