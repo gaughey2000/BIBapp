@@ -1,105 +1,44 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { fetchService } from "../api";
 
 function toGBP(cents) {
-  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" })
-    .format(cents / 100);
+  return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(cents / 100);
 }
 
 export default function ServiceDetailPage() {
   const { id } = useParams();
-  const nav = useNavigate();
-  const [svc, setSvc] = useState(null);
-  const [err, setErr] = useState("");
+  const [service, setService] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError]     = useState("");
 
   useEffect(() => {
-    let alive = true;
+    let mounted = true;
     (async () => {
       try {
-        const data = await fetchService(id);
-        if (alive) setSvc(data);
-      } catch (e) {
-        if (alive) setErr(e?.response?.data?.error || "Failed to load service");
+        const row = await fetchService(Number(id));
+        if (mounted) setService(row);
+      } catch {
+        setError("Service not found");
       } finally {
-        if (alive) setLoading(false);
+        if (mounted) setLoading(false);
       }
     })();
-    return () => { alive = false; };
+    return () => { mounted = false; };
   }, [id]);
 
-  if (loading) {
-    return (
-      <div className="container-narrow py-12">
-        <div className="card p-6 animate-pulse">
-          <div className="h-6 w-1/3 rounded" style={{ background: "color-mix(in oklab, var(--silver) 30%, transparent)" }} />
-          <div className="mt-3 h-4 w-2/3 rounded" style={{ background: "color-mix(in oklab, var(--silver) 30%, transparent)" }} />
-          <div className="mt-6 h-10 w-40 rounded" style={{ background: "color-mix(in oklab, var(--silver) 30%, transparent)" }} />
-        </div>
-      </div>
-    );
-  }
-
-  if (err) {
-    return (
-      <div className="container-narrow py-12">
-        <div className="card p-6 text-red-700 bg-red-50/70">{err}</div>
-        <button className="mt-4 btn btn-ghost" onClick={() => nav(-1)}>← Back</button>
-      </div>
-    );
-  }
-
-  if (!svc) return null;
-
-  // Handle snake_case or camelCase just in case
-  const more = (svc.more_info ?? svc.moreInfo ?? "").trim();
+  if (loading) return <div className="container"><p>Loading…</p></div>;
+  if (error)   return <div className="container"><p className="error">{error}</p></div>;
+  if (!service) return <div className="container"><p>Not found.</p></div>;
 
   return (
-    <div className="container-narrow py-12 grid md:grid-cols-2 gap-10 items-start">
-      {/* Text */}
-      <div className="order-2 md:order-1">
-        <h1 className="text-3xl font-semibold tracking-tight">{svc.name}</h1>
+    <div className="container">
+      <h1>{service.name}</h1>
+      {service.description && <p>{service.description}</p>}
+      <p><strong>{toGBP(service.price_cents)}</strong> · {service.duration_min} min</p>
+      {service.more_info && <p>{service.more_info}</p>}
 
-        <p className="mt-3 text-slate-700">
-          {svc.description || "This treatment provides natural, elegant results by a qualified aesthetics nurse."}
-        </p>
-
-        <div className="mt-6 grid gap-2 text-slate-800">
-          <div>
-            <span className="font-medium">Duration:</span>{" "}
-            {svc.duration_min} min{svc.buffer_min ? ` (+${svc.buffer_min} buffer)` : ""}
-          </div>
-          <div>
-            <span className="font-medium">Price:</span> {toGBP(svc.price_cents)}
-          </div>
-        </div>
-
-        {more && (
-          <section className="mt-8 card p-5">
-            <h2 className="text-xl font-semibold text-[color:var(--rose)]">More information</h2>
-            <div className="mt-3 text-slate-700 whitespace-pre-line">
-              {more}
-            </div>
-          </section>
-        )}
-
-        <div className="mt-6 flex gap-3">
-          <Link to={`/book?serviceId=${svc.service_id}`} className="btn btn-primary">
-            Book this service
-          </Link>
-          <Link to="/services" className="btn btn-ghost">All services</Link>
-        </div>
-      </div>
-
-      {/* Visual */}
-      <div className="order-1 md:order-2">
-        <img
-          src="/NurseClientConsultation.jpg"
-          alt={`${svc.name} at BIB Clinic`}
-          className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full aspect-[4/3]"
-        />
-      </div>
+      <Link className="btn btn-primary" to={`/book?serviceId=${service.service_id}`}>Book this service</Link>
     </div>
   );
 }
