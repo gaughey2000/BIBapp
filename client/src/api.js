@@ -1,86 +1,64 @@
-// client/src/api.js
 import axios from "axios";
 
-/**
- * Base URL rules:
- * - In production on Render, set VITE_API_URL to: https://bibappserver.onrender.com/api
- * - In local dev, this falls back to http://localhost:4000/api
- */
-function normalizeBase(url) {
-  if (!url) return "http://localhost:4000/api";
-  // remove trailing slashes then add exactly one "/api" if not present
-  const u = url.replace(/\/+$/, "");
-  return u.endsWith("/api") ? u : `${u}/api`;
-}
+const fromEnv = import.meta.env.VITE_API_URL; // e.g. https://bibappserver.onrender.com
+const base = fromEnv?.replace(/\/$/, "") || window.location.origin.replace(/\/$/, "");
 
-const base = normalizeBase(import.meta.env.VITE_API_URL);
 export const api = axios.create({
-  baseURL: base,
-  withCredentials: true, // needed for auth cookie
+  baseURL: base,           // no /api here
+  withCredentials: true,   // important for cookies
 });
 
-// ---- Public endpoints ----
+// --- Public endpoints
 export async function fetchServices() {
-  const { data } = await api.get("/services");
+  const { data } = await api.get("/api/services"); // add /api here
   return data;
 }
 
 export async function fetchService(id) {
-  const { data } = await api.get(`/services/${id}`);
+  const { data } = await api.get(`/api/services/${id}`);
   return data;
 }
 
 export async function fetchAvailability(serviceId, dateStr) {
-  const { data } = await api.get("/availability", {
-    params: { serviceId, date: dateStr },
-  });
-  return data; // array of UTC ISO strings
+  const { data } = await api.get("/api/availability", { params: { serviceId, date: dateStr } });
+  return data;
 }
 
 export async function createBooking(payload) {
-  const { data } = await api.post("/bookings", payload);
-  return data; // { booking_id, cancel_token, starts_at, ends_at }
+  const { data } = await api.post("/api/bookings", payload);
+  return data;
 }
 
-// ---- Auth ----
+// --- Admin/auth
 export async function adminLogin(email, password) {
-  const { data } = await api.post("/auth/login", { email, password });
-  return data; // { email }
+  const { data } = await api.post("/api/auth/login", { email, password });
+  return data;
 }
-
 export async function whoAmI() {
-  const { data } = await api.get("/auth/me");
-  return data; // { email, role }
+  const { data } = await api.get("/api/auth/me");
+  return data;
 }
-
 export async function adminLogout() {
-  const { data } = await api.post("/auth/logout");
-  return data; // { ok: true }
+  const { data } = await api.post("/api/auth/logout");
+  return data;
 }
-
-// ---- Admin: bookings ----
 export async function fetchAdminBookings(params = {}) {
-  const { data } = await api.get("/admin/bookings", { params });
+  const { data } = await api.get("/api/admin/bookings", { params });
   return data;
 }
-
 export async function adminCancel(booking_id) {
-  const { data } = await api.post(`/admin/bookings/${booking_id}/cancel`);
-  return data; // { ok: true }
+  const { data } = await api.post(`/api/admin/bookings/${booking_id}/cancel`);
+  return data;
 }
-
-// ---- Admin: blackouts ----
 export async function adminListBlackouts(params = {}) {
-  const { data } = await api.get("/admin/blackouts", { params });
+  const { data } = await api.get("/api/admin/blackouts", { params });
   return data;
 }
-
 export async function adminCreateBlackout(payload) {
-  const { data } = await api.post("/admin/blackouts", payload);
+  const { data } = await api.post("/api/admin/blackouts", payload);
   return data;
 }
-
 export async function adminDeleteBlackout(id) {
-  const { data } = await api.delete(`/admin/blackouts/${id}`);
+  const { data } = await api.delete(`/api/admin/blackouts/${id}`);
   return data;
 }
