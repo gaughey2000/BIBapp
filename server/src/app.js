@@ -44,10 +44,16 @@ const BOOKING_MIN_ADVANCE_MIN = 60;
 function signToken(payload) {
   return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "2h" });
 }
-
+// read token from cookie OR Authorization header
+function getTokenFromReq(req) {
+  const cookieTok = req.cookies?.[authCookieName] || null;
+  const auth = req.get("authorization") || "";
+  const headerTok = auth.startsWith("Bearer ") ? auth.slice(7) : null;
+  return cookieTok || headerTok || null;
+}
 function requireAdmin(req, res, next) {
   try {
-    const token = req.cookies?.[authCookieName];
+    const token = getTokenFromReq(req);                 
     if (!token) return res.status(401).json({ error: "Unauthorized" });
     const payload = jwt.verify(token, ENV.JWT_SECRET);
     req.user = payload;
@@ -60,6 +66,8 @@ function requireAdmin(req, res, next) {
 function isoToLondon(iso) {
   return DateTime.fromISO(iso, { zone: "utc" }).setZone("Europe/London");
 }
+
+
 
 async function hasConflict(prisma, startLondon, endLondon) {
   const startUTC = startLondon.toUTC().toJSDate();
@@ -275,7 +283,9 @@ app.post("/api/auth/login", loginGuard, async (req, res) => {
   if (!ok) return res.status(401).json({ error: "Invalid credentials" });
 
   const token = signToken({ user_id: user.user_id, role: user.role, email: user.email });
-  return res.cookie(authCookieName, token, authCookieOptions).json({ email: user.email });
+  return res
+    .cookie(authCookieName, token, authCookieOptions)   // cookie for Chrome
+    .json({ email: user.email, token });                // header token for Safari
 });
 
 app.get("/api/auth/me", requireAdmin, (req, res) => {
