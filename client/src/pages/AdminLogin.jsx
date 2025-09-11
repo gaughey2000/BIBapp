@@ -18,7 +18,6 @@ export default function AdminLogin() {
     setErr("");
     setLoading(true);
     try {
-      // ✅ FIX: pass as object
       await adminLogin({ email, password }); 
       await refetchMe();
       const dest = location.state?.from?.pathname || "/admin";
