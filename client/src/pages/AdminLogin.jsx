@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../api";
+import { adminLogin } from "../api";
 
 export default function AdminLogin() {
   const nav = useNavigate();
@@ -12,7 +12,7 @@ export default function AdminLogin() {
     e.preventDefault();
     setErr("");
     try {
-      await login(email, password);
+      await adminLogin(email, password);
       nav("/admin");
     } catch (e) {
       setErr(e?.response?.data?.error || "Login failed");
