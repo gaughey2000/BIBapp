@@ -1,8 +1,11 @@
+const isProd = process.env.NODE_ENV === "production";
+
 export const authCookieName = "token";
 
 export const authCookieOptions = {
   httpOnly: true,
-  secure: true,
-  sameSite: "none",
-  maxAge: 1000 * 60 * 60 * 2, // 2h
+  path: "/",
+  sameSite: isProd ? "none" : "lax",
+  secure: isProd ? true : false,
+  maxAge: 2 * 60 * 60, // seconds
 };

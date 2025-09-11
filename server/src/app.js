@@ -26,12 +26,16 @@ import {
 export const app = express();
 export const prisma = new PrismaClient();
 
-// Trust Render/Cloudflare proxies (needed for correct IP + rate limiter, cookies, etc.)
+// Trust Render/Cloudflare proxies (proper IPs, cookies, rate limiting)
 app.set("trust proxy", 1);
 
 // ---- core middleware ----
 app.use(helmet());
-app.use(corsMiddleware); // single source of truth for CORS (uses CLIENT_URL + localhost)
+// CORS must run before body parsers for OPTIONS to be short-circuited correctly
+app.use(corsMiddleware);
+// Handle preflight for every route (Safari is picky)
+app.options("*", corsMiddleware);
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -360,4 +364,11 @@ app.delete("/api/admin/blackouts/:id", requireAdmin, async (req, res) => {
 
   await prisma.blackoutSlot.delete({ where: { id } }).catch(() => {});
   res.json({ ok: true });
+});
+
+// ---- generic error handler (keeps JSON responses neat) ----
+app.use((err, _req, res, _next) => {
+  // CORS errors will land here too
+  console.error(err);
+  res.status(500).json({ error: "Internal error" });
 });
