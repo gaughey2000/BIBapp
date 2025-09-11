@@ -1,4 +1,3 @@
-// server/src/app.js
 import "dotenv/config";
 import { ENV } from "./config/env.js";
 
@@ -34,7 +33,7 @@ app.use(helmet());
 // CORS must run before body parsers for OPTIONS to be short-circuited correctly
 app.use(corsMiddleware);
 // Handle preflight for every route (Safari is picky)
-app.options("*", corsMiddleware);
+app.options("/api/*", corsMiddleware);
 
 app.use(express.json());
 app.use(cookieParser());
@@ -366,12 +365,9 @@ app.delete("/api/admin/blackouts/:id", requireAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 
-// ---- generic error handler (keeps JSON responses neat) ----
+
 app.use((err, _req, res, _next) => {
-  // CORS errors will land here too
+
   console.error(err);
   res.status(500).json({ error: "Internal error" });
-});
-app.all("*", (_req, res) => {
-  res.status(404).json({ error: "Not found" });
 });
