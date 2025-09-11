@@ -6,8 +6,8 @@ const isProd = ENV.NODE_ENV === "production";
 
 export const authCookieOptions = {
   httpOnly: true,
+  secure: isProd,               
   sameSite: isProd ? "none" : "lax",
-  secure:   isProd ? true : false,
   path: "/",
-  maxAge: 60 * 60 * 2, // 2 hours
+  maxAge: 2 * 60 * 60,      
 };
