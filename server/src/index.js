@@ -1,10 +1,8 @@
-import { app } from './app.js';
-import { ENV } from './config/env.js';
+import { app } from "./app.js";
+import { ENV } from "./config/env.js";
 
-
-const port = ENV.PORT || process.env.PORT || 4000;
-
-// Render/Cloudflare provide PORT
+const port = ENV.PORT;
 app.listen(port, () => {
-  console.log(`[server] ${ENV.NODE_ENV || 'production'} on :${port}`);
+  const mode = ENV.NODE_ENV || "development";
+  console.log(`[server] ${mode} on :${port}`);
 });

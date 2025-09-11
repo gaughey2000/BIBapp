@@ -1,11 +1,13 @@
-const isProd = process.env.NODE_ENV === "production";
+import { ENV } from "../config/env.js";
 
 export const authCookieName = "token";
 
+const isProd = ENV.NODE_ENV === "production";
+
 export const authCookieOptions = {
   httpOnly: true,
-  path: "/",
   sameSite: isProd ? "none" : "lax",
-  secure: isProd ? true : false,
-  maxAge: 2 * 60 * 60, // seconds
+  secure:   isProd ? true : false,
+  path: "/",
+  maxAge: 60 * 60 * 2, // 2 hours
 };

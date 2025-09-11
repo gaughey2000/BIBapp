@@ -1,64 +1,57 @@
-import axios from "axios";
+const BASE = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
 
-const fromEnv = import.meta.env.VITE_API_URL; // e.g. https://bibappserver.onrender.com
-const base = fromEnv?.replace(/\/$/, "") || window.location.origin.replace(/\/$/, "");
-
-export const api = axios.create({
-  baseURL: base,           // no /api here
-  withCredentials: true,   // important for cookies
-});
-
-// --- Public endpoints
-export async function fetchServices() {
-  const { data } = await api.get("/api/services"); // add /api here
-  return data;
+async function handle(res) {
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`${res.status} ${res.statusText} ${text}`.trim());
+  }
+  return res.status === 204 ? null : res.json();
 }
 
-export async function fetchService(id) {
-  const { data } = await api.get(`/api/services/${id}`);
-  return data;
+function get(path, opts = {}) {
+  return fetch(`${BASE}${path}`, {
+    method: "GET",
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+    ...opts,
+  }).then(handle);
 }
 
-export async function fetchAvailability(serviceId, dateStr) {
-  const { data } = await api.get("/api/availability", { params: { serviceId, date: dateStr } });
-  return data;
+function post(path, body, opts = {}) {
+  return fetch(`${BASE}${path}`, {
+    method: opts.method || "POST",
+    credentials: "include",
+    headers: { "Content-Type": "application/json", ...(opts.headers || {}) },
+    body: body !== undefined ? JSON.stringify(body) : undefined,
+    ...opts,
+  }).then(handle);
 }
 
-export async function createBooking(payload) {
-  const { data } = await api.post("/api/bookings", payload);
-  return data;
-}
+export const api = {
+  // Auth
+  me:    () => get("/api/auth/me"),
+  login: (email, password) => post("/api/auth/login", { email, password }),
+  logout: () => post("/api/auth/logout", {}),
 
-// --- Admin/auth
-export async function adminLogin(email, password) {
-  const { data } = await api.post("/api/auth/login", { email, password });
-  return data;
-}
-export async function whoAmI() {
-  const { data } = await api.get("/api/auth/me");
-  return data;
-}
-export async function adminLogout() {
-  const { data } = await api.post("/api/auth/logout");
-  return data;
-}
-export async function fetchAdminBookings(params = {}) {
-  const { data } = await api.get("/api/admin/bookings", { params });
-  return data;
-}
-export async function adminCancel(booking_id) {
-  const { data } = await api.post(`/api/admin/bookings/${booking_id}/cancel`);
-  return data;
-}
-export async function adminListBlackouts(params = {}) {
-  const { data } = await api.get("/api/admin/blackouts", { params });
-  return data;
-}
-export async function adminCreateBlackout(payload) {
-  const { data } = await api.post("/api/admin/blackouts", payload);
-  return data;
-}
-export async function adminDeleteBlackout(id) {
-  const { data } = await api.delete(`/api/admin/blackouts/${id}`);
-  return data;
-}
+  // Services
+  services: () => get("/api/services"),
+  service:  (id) => get(`/api/services/${id}`),
+
+  // Availability
+  availability: (serviceId, date) =>
+    get(`/api/availability?serviceId=${serviceId}&date=${encodeURIComponent(date)}`),
+
+  // Bookings (public)
+  book: (payload) => post("/api/bookings", payload),
+
+  // Admin
+  admin: {
+    bookings: (from, to) =>
+      get(`/api/admin/bookings?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),
+    cancel: (id) => post(`/api/admin/bookings/${id}/cancel`, {}),
+
+    blackouts: () => get("/api/admin/blackouts"),
+    createBlackout: (payload) => post("/api/admin/blackouts", payload),
+    deleteBlackout: (id) => post(`/api/admin/blackouts/${id}`, {}, { method: "DELETE" }),
+  },
+};

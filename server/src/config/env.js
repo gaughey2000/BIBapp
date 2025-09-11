@@ -10,17 +10,15 @@ const required = (name) => {
 const isProd = process.env.NODE_ENV === 'production';
 
 export const ENV = {
-  NODE_ENV: process.env.NODE_ENV ?? 'development',
-  PORT: Number(process.env.PORT ?? 4000),
+  NODE_ENV: process.env.NODE_ENV || "development",
+  PORT: process.env.PORT ? Number(process.env.PORT) : 4000,
 
-  // MUST be set in production (will throw if prod and missing)
-  CLIENT_URL: isProd ? required('CLIENT_URL') : (process.env.CLIENT_URL ?? 'http://localhost:5173'),
-  JWT_SECRET: required('JWT_SECRET'),
+  // Render client origin (no trailing slash)
+  CLIENT_URL: (process.env.CLIENT_URL || "http://localhost:5173").replace(/\/+$/, ""),
 
-  // DB may already be required elsewhere, keep it here for clarity
-  DATABASE_URL: required('DATABASE_URL'),
+  // Prisma uses DATABASE_URL directly
+  DATABASE_URL: process.env.DATABASE_URL,
 
-  // CORS/local dev helpers
-  DEV_ORIGINS: ['http://localhost:5173', 'http://127.0.0.1:5173'],
-  isProd,
+  // JWT
+  JWT_SECRET: process.env.JWT_SECRET || "dev-secret",
 };
