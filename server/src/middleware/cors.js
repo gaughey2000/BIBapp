@@ -1,18 +1,22 @@
 import cors from "cors";
+import { ENV } from "../config/env.js";
 
-const allowedOrigins = [
+const allowlist = new Set([
+  (ENV.CLIENT_URL || "").replace(/\/+$/, ""),     
   "http://localhost:5173",
-  "https://bibapp-lmpj.onrender.com", 
-];
+  "http://127.0.0.1:5173",
+]);
 
 export const corsMiddleware = cors({
-  origin(origin, callback) {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) return callback(null, true);
-    return callback(new Error("Not allowed by CORS"));
+  origin(origin, cb) {
+    if (!origin) return cb(null, true);
+
+    const o = origin.replace(/\/+$/, "");
+    if (allowlist.has(o)) return cb(null, true);
+
+    return cb(null, false);
   },
-  credentials: true,
+  credentials: true, // required for cookie auth
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-  optionsSuccessStatus: 204, 
 });
