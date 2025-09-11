@@ -76,7 +76,7 @@ export const fetchService = (id) => api.service(id);
 
 // Availability
 export const getAvailability = (serviceId, date) => api.availability(serviceId, date);
-
+export const fetchAvailability = (serviceId, date) => api.availability(serviceId, date);
 // Bookings (public)
 export const createBooking = (payload) => api.book(payload);
 
