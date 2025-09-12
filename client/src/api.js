@@ -32,8 +32,8 @@ export async function fetchService(id) {
   return fetch(`${BASE}/api/services/${id}`, withOpts()).then(json);
 }
 export async function fetchAvailability(arg1, arg2) {
-  // Accept either: (serviceId, date) OR ({ serviceId | service_id, date })
-  const serviceId = typeof arg1 === "object" ? (arg1.serviceId ?? arg1.service_id) : arg1;
+  // Accept either: (serviceId, date) OR ({ serviceId, date })
+  const serviceId = typeof arg1 === "object" ? arg1.serviceId : arg1;
   const date = typeof arg1 === "object" ? arg1.date : arg2;
 
   // Validate inputs early
@@ -45,11 +45,11 @@ export async function fetchAvailability(arg1, arg2) {
   }
 
   const url = new URL(`${BASE}/api/availability`);
-  // Use snake_case — most servers expect this
-  url.searchParams.set("service_id", String(serviceId));
+  // 👇 camelCase to match your backend route
+  url.searchParams.set("serviceId", String(serviceId));
   url.searchParams.set("date", String(date));
 
-  // Public endpoint: don't send credentials or Authorization
+  // Public endpoint: no cookies/Authorization
   const res = await fetch(url, {
     method: "GET",
     headers: { Accept: "application/json" },
@@ -57,7 +57,7 @@ export async function fetchAvailability(arg1, arg2) {
 
   if (!res.ok) {
     const text = await res.text().catch(() => "");
-    throw new Error(`Availability ${res.status}: ${text || res.statusText}`);
+    throw new Error(text || `Availability HTTP ${res.status}`);
   }
   return res.json();
 }
