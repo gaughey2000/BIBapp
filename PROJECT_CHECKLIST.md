@@ -40,18 +40,18 @@ X **Checkpoint:** `npm test` runs both FE + BE and all tests pass. X
 ### Back end
 - [ x ] Add `npm run prisma:deploy` → `prisma migrate deploy`
 - [ x ] Ensure `npm start` launches server
-- [ ] Set envs on Render (`DATABASE_URL`, `JWT_SECRET`, `CLIENT_URL`, `NODE_ENV=production`)
+- [ x ] Set envs on Render (`DATABASE_URL`, `JWT_SECRET`, `CLIENT_URL`, `NODE_ENV=production`)
 
 ### Front end
-- [ ] Use `VITE_API_URL` for API base URL
-- [ ] Confirm `npm run build` works
-- [ ] Set `VITE_API_URL` on Render to server URL
+- [ x ] Use `VITE_API_URL` for API base URL
+- [ x ] Confirm `npm run build` works
+- [ x ] Set `VITE_API_URL` on Render to server URL
 
 ### Deployment
-- [ ] Create Postgres DB on Render
-- [ ] Deploy server service → connect to DB
-- [ ] Deploy client service → point to server
-- [ ] Run migrations in prod
+- [ x ] Create Postgres DB on Render
+- [ x ] Deploy server service → connect to DB
+- [ x ] Deploy client service → point to server
+- [ x ] Run migrations in prod
 
 **Checkpoint:** Visit FE Render URL → book service → booking appears in DB.
 

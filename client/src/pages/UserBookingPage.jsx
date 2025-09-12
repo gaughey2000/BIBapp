@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom"; 
+import { useSearchParams } from "react-router-dom";
 import { fetchServices, fetchAvailability, createBooking } from "../api";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 
+// ---- helpers ----
 function toGBP(cents) {
   const n = Number(cents) || 0;
   return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" }).format(n / 100);
@@ -15,8 +16,6 @@ function formatTime(iso) {
     hour12: false,
   });
 }
-
-// Local date helpers
 function toYMDLocal(d) {
   const y = d.getFullYear();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -28,12 +27,20 @@ function ymdToLocalDate(ymd) {
   return new Date(y, m - 1, d);
 }
 
+const STORAGE_KEY = "policyAcceptedV1";
+
 export default function UserBookingPage() {
   const [searchParams] = useSearchParams();
   const initialServiceId = searchParams.get("serviceId") || "";
 
+  // Policy popup state (remembered)
+  const [policyAccepted, setPolicyAccepted] = useState(
+    () => localStorage.getItem(STORAGE_KEY) === "1"
+  );
+
+  // Booking flow state
   const [step, setStep] = useState(1);
-  const [services, setServices] = useState([]);    
+  const [services, setServices] = useState([]);
   const [serviceId, setServiceId] = useState(initialServiceId);
   const [date, setDate] = useState("");
   const [slots, setSlots] = useState([]);
@@ -45,22 +52,39 @@ export default function UserBookingPage() {
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
+  // Scroll lock while popup is open
+  useEffect(() => {
+    document.body.style.overflow = policyAccepted ? "" : "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [policyAccepted]);
+
+  const acceptPolicy = () => {
+    localStorage.setItem(STORAGE_KEY, "1");
+    setPolicyAccepted(true);
+  };
+
+  // Load services
   useEffect(() => {
     let cancel = false;
     (async () => {
       try {
         const list = await fetchServices();
         if (!cancel) {
-          setServices(Array.isArray(list) ? list : []);
-          if (initialServiceId && list.some(s => String(s.service_id) === String(initialServiceId))) {
+          const safe = Array.isArray(list) ? list : [];
+          setServices(safe);
+          if (initialServiceId && safe.some(s => String(s.service_id) === String(initialServiceId))) {
             setServiceId(String(initialServiceId));
           }
         }
       } catch (e) {
-        if (!cancel) setErr(e.message || "Failed to load services");
+        if (!cancel) setErr(e?.message || "Failed to load services");
       }
     })();
-    return () => { cancel = true; };
+    return () => {
+      cancel = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialServiceId]);
 
@@ -71,7 +95,6 @@ export default function UserBookingPage() {
     if (!serviceId || !date) return;
     setLoading(true);
     try {
-      // ✅ FIX: pass an object, not positional args
       const data = await fetchAvailability({ serviceId: Number(serviceId), date });
       setSlots(Array.isArray(data) ? data : []);
     } catch (e) {
@@ -104,15 +127,25 @@ export default function UserBookingPage() {
     }
   }
 
+  // Success screen
   if (step === 4 && result) {
     return (
       <div className="container-narrow py-10">
         <div className="max-w-xl mx-auto card p-6">
           <h1 className="text-2xl font-semibold tracking-tight">Booking confirmed ✅</h1>
-          <p className="mt-3"><b>Starts:</b> {new Date(result.starts_at).toLocaleString("en-GB")}</p>
-          <p className="mt-1"><b>Ends:</b> {new Date(result.ends_at).toLocaleString("en-GB")}</p>
-          <p className="mt-4 text-sm text-slate-600"><b>Your cancel token (save this):</b></p>
-          <code className="mt-2 block rounded-lg bg-white/70 px-3 py-2 overflow-x-auto" style={{ border: "1px solid var(--silver)" }}>
+          <p className="mt-3">
+            <b>Starts:</b> {new Date(result.starts_at).toLocaleString("en-GB")}
+          </p>
+          <p className="mt-1">
+            <b>Ends:</b> {new Date(result.ends_at).toLocaleString("en-GB")}
+          </p>
+          <p className="mt-4 text-sm text-slate-600">
+            <b>Your cancel token (save this):</b>
+          </p>
+          <code
+            className="mt-2 block rounded-lg bg-white/70 px-3 py-2 overflow-x-auto"
+            style={{ border: "1px solid var(--silver)" }}
+          >
             {result.cancel_token}
           </code>
         </div>
@@ -125,8 +158,9 @@ export default function UserBookingPage() {
   return (
     <div className="container-narrow py-10">
       <h1 className="text-3xl font-semibold tracking-tight">Book an appointment</h1>
+
       {err && (
-        <div className="mt-3 card p-3 text-sm text-red-700 bg-red-50/70">
+        <div className="mt-3 card p-3 text-sm text-red-700 bg-red-50/70" role="alert" aria-live="polite">
           {err}
         </div>
       )}
@@ -259,6 +293,37 @@ export default function UserBookingPage() {
             </button>
           </form>
         </section>
+      )}
+
+      {/* policy popup */}
+      {!policyAccepted && (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/30">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="policy-title"
+            aria-describedby="policy-desc"
+            className="w-[min(90vw,28rem)] rounded-2xl border border-[color:var(--rose)]/40
+                       bg-white/55 backdrop-blur-md shadow-xl p-5"
+          >
+            <h2 id="policy-title" className="text-base font-semibold text-[color:var(--rose)]">
+              Booking Policy
+            </h2>
+            <p id="policy-desc" className="mt-2 text-sm text-slate-700">
+              Deposits are <strong>non-refundable</strong> if you cancel or reschedule within
+              <strong> 48 hours</strong>. Short-notice changes don’t give us time to offer your slot to someone else.
+            </p>
+            <button
+              onClick={acceptPolicy}
+              className="mt-4 inline-flex items-center justify-center rounded-xl
+                         bg-[color:var(--rose)] px-4 py-2 text-sm font-medium text-white
+                         hover:opacity-90 focus:outline-none focus:ring-2
+                         focus:ring-[color:var(--rose)] focus:ring-offset-2"
+            >
+              I Understand
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

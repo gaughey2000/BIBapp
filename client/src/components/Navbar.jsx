@@ -32,7 +32,7 @@ export default function Navbar() {
 
           {/* Mobile toggle */}
           <button
-            className="md:hidden p-2 rounded-md hover:bg-white/60"
+            className="rounded-md p-2 outline-none ring-offset-2 focus:ring-2 focus:ring-slate-400"
             onClick={() => setOpen(v => !v)}
             aria-label="Toggle menu"
           >

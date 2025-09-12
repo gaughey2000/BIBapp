@@ -8,47 +8,65 @@ export default function AboutPage() {
             About BIB Clinic
           </h1>
           <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
-            At <span className="font-semibold">BIB Clinic</span>, we believe true
-            beauty and wellness come from care, expertise, and a personal touch.
-            Our clinic offers modern treatments with timeless professionalism,
-            giving every client a refined, elegant experience.
+            Here at <span className="font-semibold">BIB Clinic</span>, we believe true
+            beauty and wellness come from love and care. Thats why we do 
+            what we do. We provide a personal experience in a professional 
+            environment.
           </p>
         </section>
-
-        {/* Story */}
+          <div>
+            <h2 className="text-2xl text-center font-semibold text-[color:var(--rose)] mb-3">The Team</h2>
+          </div>
+        {/* The Team */}
         <section className="grid md:grid-cols-2 gap-10 items-center">
+
           <div>
             <h2 className="text-2xl font-semibold text-[color:var(--rose)] mb-3">
-              Our Story
+              Rachel
             </h2>
             <p className="leading-relaxed">
-              Founded with a passion for combining science, artistry, and care,
-              BIB Clinic has grown into a trusted destination for those seeking
-              professional treatments in a warm, welcoming space. We focus on
-              tailored solutions that help you feel your best while maintaining
-              natural, timeless results.
+            Rachel is the practicioner here at BIB Clinic. With more
+            than 15 years of experience in asethtics and 20+ years as a
+            a registered nurse, you can be confident in your treatment.
+            "quote from rachel"
             </p>
           </div>
           <img
-  src="/NurseClientConsultation.jpg"
-  alt="Nurse consultation with client at BIB Clinic"
-  className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-full"
-/>
+            src="/NurseWorking2.jpg"
+            alt="Nurse consultation with client at BIB Clinic"
+            className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-full"
+          />
+          <img
+            src="/ReceptionistSmiling.jpg"
+            alt="Nurse consultation with client at BIB Clinic"
+            className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-full"
+          />          
+          <div>
+            <h2 className="text-2xl font-semibold text-[color:var(--rose)] mb-3">
+              Diane
+            </h2>
+            <p className="leading-relaxed">
+              From booking your next appointment to
+              welcoming you when first enter BIB Clinic Diane
+              is here to make everything around your treatment fantastic. 
+            </p>
+          </div>
+
         </section>
 
         {/* Values */}
         <section>
           <h2 className="text-2xl font-semibold text-[color:var(--rose)] mb-6 text-center">
-            Our Values
+            What We Offer
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="p-6 rounded-xl shadow bg-white/70 backdrop-blur-sm border border-[color:var(--silver)]">
               <h3 className="text-lg font-bold text-[color:var(--rose)] mb-2">
-                Professionalism
+                Luxury
               </h3>
               <p>
-                Every treatment is performed with expertise, precision, and
-                attention to detail, ensuring the highest quality care.
+                We only use the best products and brands for our treatment to 
+                ensure you are getting the quality you deserve.
               </p>
             </div>
             <div className="p-6 rounded-xl shadow bg-white/70 backdrop-blur-sm border border-[color:var(--silver)]">
@@ -65,8 +83,8 @@ export default function AboutPage() {
                 Elegance
               </h3>
               <p>
-                From our clinic design to our results, we aim for timeless,
-                natural elegance in every aspect of your experience.
+                We pride ourselves on the ability to enhance your
+                own natural beautiy. Leaving you with elegant results.
               </p>
             </div>
           </div>
