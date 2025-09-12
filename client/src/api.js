@@ -31,11 +31,35 @@ export async function fetchServices() {
 export async function fetchService(id) {
   return fetch(`${BASE}/api/services/${id}`, withOpts()).then(json);
 }
-export async function fetchAvailability(serviceId, date) {
+export async function fetchAvailability(arg1, arg2) {
+  // Accept either: (serviceId, date) OR ({ serviceId | service_id, date })
+  const serviceId = typeof arg1 === "object" ? (arg1.serviceId ?? arg1.service_id) : arg1;
+  const date = typeof arg1 === "object" ? arg1.date : arg2;
+
+  // Validate inputs early
+  if (!Number.isInteger(Number(serviceId))) {
+    throw new Error(`Invalid serviceId: ${serviceId}`);
+  }
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(date))) {
+    throw new Error(`Invalid date (YYYY-MM-DD expected): ${date}`);
+  }
+
   const url = new URL(`${BASE}/api/availability`);
-  url.searchParams.set("serviceId", String(serviceId));
-  url.searchParams.set("date", date);
-  return fetch(url, withOpts()).then(json);
+  // Use snake_case — most servers expect this
+  url.searchParams.set("service_id", String(serviceId));
+  url.searchParams.set("date", String(date));
+
+  // Public endpoint: don't send credentials or Authorization
+  const res = await fetch(url, {
+    method: "GET",
+    headers: { Accept: "application/json" },
+  });
+
+  if (!res.ok) {
+    const text = await res.text().catch(() => "");
+    throw new Error(`Availability ${res.status}: ${text || res.statusText}`);
+  }
+  return res.json();
 }
 export async function createBooking(input) {
   return fetch(`${BASE}/api/bookings`, withOpts("POST", input)).then(json);
