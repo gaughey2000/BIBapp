@@ -183,9 +183,19 @@ export default function AdminDashboard() {
                   <td className="capitalize">{r.status}</td>
                   <td>
                     {r.status === "confirmed" ? (
-                      <button onClick={() => doCancel(r.booking_id)} className="btn btn-ghost">
-                        Cancel
-                      </button>
+                      <button
+                      className="btn btn-danger"
+                      onClick={async () => {
+                        try {
+                          await adminCancel(row.booking_id);  // <-- not row.id
+                          // refresh or update state
+                        } catch (e) {
+                          alert(e.message);
+                        }
+                      }}
+                    >
+                      Cancel
+                    </button>
                     ) : (
                       <span className="text-slate-500">-</span>
                     )}

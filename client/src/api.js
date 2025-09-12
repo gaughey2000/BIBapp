@@ -89,7 +89,11 @@ export async function fetchAdminBookings({ from, to } = {}) {
   return fetch(url, withOpts()).then(json);
 }
 export async function adminCancel(bookingId) {
-  return fetch(`${BASE}/api/admin/bookings/${bookingId}/cancel`, withOpts("POST")).then(json);
+  const id = Number(bookingId);
+  if (!Number.isInteger(id)) {
+    throw new Error(`Invalid booking id: ${bookingId}`);
+  }
+  return fetch(`${BASE}/api/admin/bookings/${id}/cancel`, withOpts("POST")).then(json);
 }
 export async function adminListBlackouts({ from, to } = {}) {
   const url = new URL(`${BASE}/api/admin/blackouts`);
