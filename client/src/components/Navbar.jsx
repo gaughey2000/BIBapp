@@ -35,7 +35,7 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-1">
             <NavLink to="/book" className={({isActive}) => `${linkBase} ${isActive ? active : inactive}`}>Book</NavLink>
-            <NavLink to="/services" className={({isActive}) => `${linkBase} ${isActive ? active : inactive}`}>Services</NavLink>
+            <NavLink to="/services" className={({isActive}) => `${linkBase} ${isActive ? active : inactive}`}>Treatments</NavLink>
             <NavLink to="/about" className={({isActive}) => `${linkBase} ${isActive ? active : inactive}`}>About</NavLink>
             <NavLink to="/contact" className={({isActive}) => `${linkBase} ${isActive ? active : inactive}`}>Contact</NavLink>
             <NavLink to="/book" className="ml-2 btn btn-primary">Book now</NavLink>

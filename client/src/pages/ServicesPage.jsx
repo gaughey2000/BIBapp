@@ -36,7 +36,7 @@ export default function ServicesPage() {
         {/* Header */}
         <section className="text-center">
           <h1 className="text-4xl font-bold text-[color:var(--rose)]">
-            Our Services
+            Our Treatments
           </h1>
           <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
             Explore our curated range of treatments, designed to blend expertise,
