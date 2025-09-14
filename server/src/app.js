@@ -1,6 +1,3 @@
-import "dotenv/config";
-import { ENV } from "./config/env.js";
-
 import express from "express";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
@@ -10,10 +7,10 @@ import bcrypt from "bcrypt";
 import { z } from "zod";
 import { DateTime } from "luxon";
 
+import { ENV } from "./config/env.js";
 import { corsMiddleware } from "./middleware/cors.js";
 import { authCookieName, authCookieOptions } from "./utils/cookies.js";
 import { loginLimiter as loginGuard, bookingLimiter } from "./middleware/rateLimiters.js";
-
 import {
   weekdayOf,
   toZonedDate,
@@ -44,6 +41,7 @@ const BOOKING_MIN_ADVANCE_MIN = 60;
 function signToken(payload) {
   return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "2h" });
 }
+
 // read token from cookie OR Authorization header
 function getTokenFromReq(req) {
   const cookieTok = req.cookies?.[authCookieName] || null;
@@ -51,9 +49,10 @@ function getTokenFromReq(req) {
   const headerTok = auth.startsWith("Bearer ") ? auth.slice(7) : null;
   return cookieTok || headerTok || null;
 }
+
 function requireAdmin(req, res, next) {
   try {
-    const token = getTokenFromReq(req);                 
+    const token = getTokenFromReq(req);
     if (!token) return res.status(401).json({ error: "Unauthorized" });
     const payload = jwt.verify(token, ENV.JWT_SECRET);
     req.user = payload;
@@ -66,8 +65,6 @@ function requireAdmin(req, res, next) {
 function isoToLondon(iso) {
   return DateTime.fromISO(iso, { zone: "utc" }).setZone("Europe/London");
 }
-
-
 
 async function hasConflict(prisma, startLondon, endLondon) {
   const startUTC = startLondon.toUTC().toJSDate();
@@ -99,7 +96,7 @@ app.get("/health", (_req, res) => res.json({ ok: true }));
 app.get("/api/services", async (_req, res) => {
   const services = await prisma.service.findMany({
     where: { is_active: true },
-    orderBy: { service_id: "asc" },
+    orderBy: [{ treatment_type: "asc" }, { name: "asc" }], // group-friendly ordering
   });
   res.json(services);
 });
@@ -375,15 +372,15 @@ app.delete("/api/admin/blackouts/:id", requireAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 
-
 app.use((err, _req, res, _next) => {
-
   console.error(err);
   res.status(500).json({ error: "Internal error" });
 });
+
 app.get("/", (_req, res) => {
   res.type("text/plain").send("BIB API is running. Try /health or /api/services");
 });
+
 app.use((_req, res) => {
   res.status(404).json({ error: "Not found" });
 });
