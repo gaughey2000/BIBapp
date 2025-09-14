@@ -12,8 +12,8 @@ const LABELS = {
   BOTULINUM_TOXIN: "Botulinum Toxin",
   CHEMICAL_PEELS: "Chemical Peels",
   DERMAL_FILLER: "Dermal Filler",
-  SKIN_CARE: "Skin care",
-  OTHER_SERVICES: "Other services",
+  SKIN_CARE: "Skin Care",
+  OTHER_SERVICES: "Other Services",
 };
 
 const GROUP_ORDER = [
@@ -24,7 +24,36 @@ const GROUP_ORDER = [
   "OTHER_SERVICES",
 ];
 
-// --- Your existing card markup extracted so styles remain identical ---
+// 👉 Map categories to your placeholder images
+const CATEGORY_META = {
+  BOTULINUM_TOXIN: {
+    img: "/NurseInjectingClient.jpg",
+    blurb:
+      "Target lines with precise botulinum toxin treatments for a smoother, refreshed look.",
+  },
+  CHEMICAL_PEELS: {
+    img: "/ClientWaitingFillingForm.jpg",
+    blurb:
+      "Refine texture and brighten tone with tailored peels for clearer, radiant skin.",
+  },
+  DERMAL_FILLER: {
+    img: "/ClientSmillingAtResults.jpg",
+    blurb:
+      "Restore volume and enhance contours using premium dermal fillers.",
+  },
+  SKIN_CARE: {
+    img: "/NurseInjectingClient2.jpg",
+    blurb:
+      "From microneedling to boosters—advanced care to strengthen and rejuvenate skin.",
+  },
+  OTHER_SERVICES: {
+    img: "/ClientWaitingFillingForm.jpg", // reuse placeholder until you pick a new one
+    blurb:
+      "Consultations, reviews, vitamin injections and more to support your journey.",
+  },
+};
+
+// --- Card stays the same ---
 function ServiceCard({ s }) {
   return (
     <div className="p-6 rounded-xl shadow bg-white/70 backdrop-blur-sm border border-[color:var(--silver)] flex flex-col">
@@ -84,7 +113,7 @@ export default function ServicesPage() {
       const key = s.treatment_type ?? "OTHER_SERVICES";
       if (map[key]) map[key].push(s);
     }
-    return GROUP_ORDER.map(key => ({ key, label: LABELS[key], items: map[key] }));
+    return GROUP_ORDER.map(key => ({ key, label: LABELS[key], meta: CATEGORY_META[key], items: map[key] }));
   }, [services]);
 
   return (
@@ -109,7 +138,7 @@ export default function ServicesPage() {
             </p>
           )}
 
-          {/* Loading skeleton (unchanged) */}
+          {/* Skeleton */}
           {loading && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
@@ -126,37 +155,53 @@ export default function ServicesPage() {
             </div>
           )}
 
-          {/* Grouped lists */}
+          {/* Grouped */}
           {!loading && services.length > 0 && (
-            <div className="space-y-6">
-              {grouped.map(({ key, label, items }) => (
-                <details key={key} open className="rounded-xl border border-[color:var(--silver)] bg-white/40 backdrop-blur-sm">
-                  <summary className="px-4 py-3 cursor-pointer flex items-center justify-between bg-white/60">
-                    <span className="text-lg font-semibold text-[color:var(--rose)]">{label}</span>
-                    <span className="text-sm text-slate-600">({items.length})</span>
-                  </summary>
+            <div className="space-y-10">
+              {grouped.map(({ key, label, meta, items }) => (
+                <section
+                  key={key}
+                  className="rounded-xl border border-[color:var(--silver)] bg-white/50 backdrop-blur-sm shadow"
+                >
+                  {/* Header row */}
+                  <div className="p-6 flex flex-col md:flex-row md:items-center gap-5">
+                    {meta?.img && (
+                      <img
+                        src={meta.img}
+                        alt={label}
+                        className="w-full md:w-40 h-40 object-cover rounded-lg border border-[color:var(--silver)] bg-white/70"
+                      />
+                    )}
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold text-[color:var(--rose)]">
+                        {label}
+                      </h2>
+                      {meta?.blurb && (
+                        <p className="mt-2 text-slate-700">{meta.blurb}</p>
+                      )}
+                    </div>
+                    <div className="self-start md:self-auto">
+                      <span className="inline-flex items-center px-3 py-1 rounded-full border border-[color:var(--silver)] text-sm text-slate-700 bg-white/70">
+                        {items.length} {items.length === 1 ? "treatment" : "treatments"}
+                      </span>
+                    </div>
+                  </div>
 
-                  {/* Use the SAME grid + gap as your original flat list */}
-                  <div className="p-4">
+                  {/* Services grid */}
+                  <div className="p-6 pt-0 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {items.length === 0 ? (
-                      <p className="text-slate-600">No services in this group.</p>
+                      <p className="text-slate-600">No services available in this category.</p>
                     ) : (
-                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {items.map((s) => (
-                          <ServiceCard key={s.service_id} s={s} />
-                        ))}
-                      </div>
+                      items.map((s) => <ServiceCard key={s.service_id} s={s} />)
                     )}
                   </div>
-                </details>
+                </section>
               ))}
             </div>
           )}
 
           {!loading && !err && services.length === 0 && (
-            <p className="text-center">
-              No services available at the moment.
-            </p>
+            <p className="text-center">No services available at the moment.</p>
           )}
         </section>
 
