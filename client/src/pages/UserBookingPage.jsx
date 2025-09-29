@@ -468,12 +468,10 @@ export default function UserBookingPage() {
               </div>
             </form>
           </section>
-        </section>
+          </section>
         )}
-      </div>
-    </div>
 
-    {/* policy popup */}
+        {/* policy popup */}
         {!policyAccepted && (
           <div className="fixed inset-0 z-50 grid place-items-center bg-black/30">
             <div
@@ -503,6 +501,7 @@ export default function UserBookingPage() {
             </div>
           </div>
         )}
+    </div>
       </div>
     </div>
   );
