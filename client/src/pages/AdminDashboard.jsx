@@ -271,12 +271,6 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        )}
-      </div>
 
       {/* Calendar */}
       <section className="mt-6">
