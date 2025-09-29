@@ -500,6 +500,7 @@ export default function UserBookingPage() {
           </div>
         </div>
       )}
+      </div>
     </div>
   );
 }
