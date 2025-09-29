@@ -85,7 +85,6 @@ export default function UserBookingPage() {
     return () => {
       cancel = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialServiceId]);
 
   async function loadAvailability() {
@@ -97,7 +96,7 @@ export default function UserBookingPage() {
     try {
       const data = await fetchAvailability({ serviceId: Number(serviceId), date });
       setSlots(Array.isArray(data) ? data : []);
-    } catch (e) {
+    } catch {
       setErr("Failed to load availability");
     } finally {
       setLoading(false);

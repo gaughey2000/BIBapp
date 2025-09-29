@@ -7,7 +7,11 @@ function getToken() {
   try { return sessionStorage.getItem(TOKEN_KEY); } catch { return null; }
 }
 function setToken(t) {
-  try { t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); } catch {}
+  try { 
+    t ? sessionStorage.setItem(TOKEN_KEY, t) : sessionStorage.removeItem(TOKEN_KEY); 
+  } catch (error) {
+    console.warn('Failed to access sessionStorage:', error.message);
+  }
 }
 
 const json = (res) => {

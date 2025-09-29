@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useEffect, useMemo, useState } from "react";
 import { whoAmI, adminLogout } from "../api";
 
-const AuthCtx = createContext(null);
+export const AuthCtx = createContext(null);
 
 export function AuthProvider({ children }) {
   const [status, setStatus] = useState("checking"); // "checking" | "guest" | "authed"
@@ -35,7 +35,11 @@ export function AuthProvider({ children }) {
   };
 
   const logout = async () => {
-    try { await adminLogout(); } catch {}
+    try { 
+      await adminLogout(); 
+    } catch (error) {
+      console.warn('Logout request failed:', error.message);
+    }
     setUser(null);
     setStatus("guest");
   };
@@ -50,10 +54,4 @@ export function AuthProvider({ children }) {
   }), [status, user]);
 
   return <AuthCtx.Provider value={value}>{children}</AuthCtx.Provider>;
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthCtx);
-  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
-  return ctx;
 }

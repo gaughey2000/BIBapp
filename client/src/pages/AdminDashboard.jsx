@@ -9,7 +9,7 @@ import {
   adminDeleteBlackout,
 } from "../api";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../auth/useAuth";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -67,15 +67,6 @@ export default function AdminDashboard() {
       mounted = false;
     };
   }, [nav]);
-
-  async function doCancel(id) {
-    try {
-      await adminCancel(id);
-      setRows((r) => r.map((x) => (x.booking_id === id ? { ...x, status: "cancelled" } : x)));
-    } catch {
-      setErr("Cancel failed");
-    }
-  }
 
   async function doLogout() {
     try {
@@ -187,7 +178,7 @@ export default function AdminDashboard() {
                       className="btn btn-danger"
                       onClick={async () => {
                         try {
-                          await adminCancel(row.booking_id);  // <-- not row.id
+                          await adminCancel(r.booking_id);  // Fixed: use 'r' instead of 'row'
                           // refresh or update state
                         } catch (e) {
                           alert(e.message);
