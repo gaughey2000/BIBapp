@@ -1,16 +1,20 @@
 @import "tailwindcss";
 
-/* ---- Brand tokens (safe, plain CSS) ---- */
-:root{
-  --cream: #faf7f2;    /* off‑white / creamy */
-  --rose:  #b76e79;    /* rose gold */
-  --silver:#c7ccd1;    /* soft silver */
-  --ink:   #1f2937;    /* slate-800-ish */
-  --radius-card: 16px;
+/* ---- Brand tokens for consistent theming ---- */
+:root {
+  --cream: #faf7f2;
+  --rose: #b76e79;
+  --rose-light: #d4a4b1;
+  --rose-dark: #a15964;
+  --silver: #c7ccd1;
+  --ink: #1f2937;
 }
 
-/* Base */
-html, body, #root { height: 100%; }
+/* Base styles */
+html, body, #root { 
+  height: 100%; 
+}
+
 body {
   background: var(--cream);
   color: var(--ink);
@@ -18,36 +22,151 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Minimal shared classes (plain CSS so no toolchain warnings) */
-.container-narrow { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; }
-.card {
-  border: 1px solid var(--silver);
-  background: rgba(255,255,255,0.6);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-  border-radius: var(--radius-card);
-  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+/* Custom component styles using Tailwind classes */
+.container-narrow { 
+  @apply max-w-6xl mx-auto px-4; 
 }
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: .5rem 1rem; border-radius: .75rem; font-weight: 500;
-  transition: filter .15s ease, background-color .15s ease;
-}
-.btn-primary {
-  color: #fff;
-  background: linear-gradient(180deg, color-mix(in oklab, var(--rose) 88%, white 12%), var(--rose));
-}
-.btn-primary:hover { filter: brightness(0.98); }
-.btn-ghost {
-  border: 1px solid var(--silver);
-  background: rgba(255,255,255,0.6);
-}
-.muted { color: #64748b; } /* slate-500/600 vibe */
 
-/* Frosted navbar (safe, no at-rules) */
+.card {
+  @apply border border-slate-200 bg-white/80 backdrop-blur-md rounded-2xl shadow-sm transition-all duration-200;
+}
+
+.card:hover {
+  @apply -translate-y-0.5 shadow-lg border-[color:var(--rose)]/30;
+}
+
+.card-flat {
+  @apply border border-slate-100 bg-white/60 rounded-2xl shadow-sm;
+}
+
+.card-elevated {
+  @apply bg-white/95 backdrop-blur-lg rounded-2xl shadow-xl border-0;
+}
+
+.btn {
+  @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-sm 
+         border border-transparent cursor-pointer transition-all duration-200 focus:outline-none 
+         focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-primary {
+  @apply text-white bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--rose-dark)] 
+         shadow-sm hover:shadow-md hover:-translate-y-0.5 focus:ring-[color:var(--rose)]/50
+         active:translate-y-0;
+}
+
+.btn-secondary {
+  @apply text-slate-700 bg-white border-slate-200 shadow-sm 
+         hover:bg-slate-50 hover:border-[color:var(--rose)]/30 hover:-translate-y-0.5 
+         focus:ring-slate-200;
+}
+
+.btn-ghost {
+  @apply text-slate-600 border-slate-200 hover:bg-white/60 hover:border-[color:var(--rose)]/30;
+}
+
+.btn-danger {
+  @apply text-white bg-gradient-to-r from-red-500 to-red-600 shadow-sm 
+         hover:from-red-400 hover:to-red-500 hover:shadow-md hover:-translate-y-0.5 
+         focus:ring-red-500/50;
+}
+
+.btn-success {
+  @apply text-white bg-gradient-to-r from-emerald-500 to-emerald-600 shadow-sm 
+         hover:from-emerald-400 hover:to-emerald-500 hover:shadow-md hover:-translate-y-0.5 
+         focus:ring-emerald-500/50;
+}
+
+.btn-sm {
+  @apply px-4 py-2 text-xs;
+}
+
+.btn-lg {
+  @apply px-8 py-4 text-base;
+}
+
+.input, .textarea, .select {
+  @apply w-full px-4 py-3 border border-slate-200 rounded-lg bg-white/80 backdrop-blur-sm 
+         text-sm transition-all duration-200 focus:outline-none focus:border-[color:var(--rose)] 
+         focus:ring-4 focus:ring-[color:var(--rose)]/10 focus:bg-white/95 disabled:opacity-50 
+         disabled:cursor-not-allowed;
+}
+
 .nav-frosted {
-  background: color-mix(in oklab, var(--cream) 82%, transparent);
-  -webkit-backdrop-filter: blur(18px);
-  backdrop-filter: blur(18px);
-  border-bottom: 1px solid var(--silver);
+  @apply bg-[color:var(--cream)]/85 backdrop-blur-xl border-b border-[color:var(--rose)]/20 shadow-sm;
+}
+
+.text-muted {
+  @apply text-slate-500;
+}
+
+.status-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium capitalize;
+}
+
+.status-confirmed {
+  @apply bg-emerald-50 text-emerald-700 border border-emerald-200;
+}
+
+.status-cancelled {
+  @apply bg-red-50 text-red-700 border border-red-200;
+}
+
+.status-pending {
+  @apply bg-amber-50 text-amber-700 border border-amber-200;
+}
+
+.table {
+  @apply w-full bg-white/80 backdrop-blur-md rounded-2xl overflow-hidden shadow-sm;
+}
+
+.table th {
+  @apply bg-slate-50/50 px-6 py-4 text-left text-xs font-semibold text-slate-600 
+         uppercase tracking-wide border-b border-slate-200;
+}
+
+.table td {
+  @apply px-6 py-4 text-sm text-slate-700 border-b border-slate-100;
+}
+
+.table tr:hover {
+  @apply bg-[color:var(--rose)]/5;
+}
+
+.table tr:last-child td {
+  @apply border-b-0;
+}
+
+.section-padding {
+  @apply py-12 md:py-16 lg:py-20;
+}
+
+.loading {
+  @apply relative pointer-events-none;
+}
+
+.loading::after {
+  @apply absolute top-1/2 left-1/2 w-5 h-5 border-2 border-slate-200 border-t-[color:var(--rose)] 
+         rounded-full animate-spin;
+  content: '';
+  transform: translate(-50%, -50%);
+}
+
+/* Enhanced animations */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.3s ease-out;
 }

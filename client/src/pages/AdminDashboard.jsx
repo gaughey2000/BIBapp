@@ -122,82 +122,155 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="container-narrow py-10">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold tracking-tight">Admin — Bookings</h1>
-        <div className="flex items-center gap-3">
-          {me && (
-            <span className="text-slate-600">
-              Signed in as <b>{me.email}</b>
-            </span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-[color:var(--cream)]">
+      <div className="container-narrow py-8">
+        {/* Header */}
+        <div className="card-elevated p-6 mb-8 animate-fade-in-up">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Admin Dashboard</h1>
+              <p className="text-slate-600 mt-1">Manage bookings and availability</p>
+            </div>
+            <div className="flex items-center gap-4">
+              {me && (
+                <div className="text-right">
+                  <div className="text-sm font-medium text-slate-700">Welcome back</div>
+                  <div className="text-sm text-slate-500">{me.email}</div>
+                </div>
+              )}
+              <button 
+                onClick={doLogout} 
+                className="btn btn-secondary group"
+              >
+                <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                Logout
+              </button>
+            </div>
+          </div>
+
+          {err && (
+            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm animate-fade-in-up">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                {err}
+              </div>
+            </div>
           )}
-          <button onClick={doLogout} className="btn btn-ghost">Logout</button>
         </div>
-      </div>
 
-      {err && (
-        <div className="mt-3 card p-3 text-sm text-red-700 bg-red-50/70">
-          {err}
+        {/* Bookings table */}
+        <div className="card-elevated p-6 mb-8 animate-fade-in-up">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-semibold text-slate-900">Recent Bookings</h2>
+            <div className="flex items-center gap-2 text-sm text-slate-500">
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Last updated: {new Date().toLocaleTimeString()}
+            </div>
+          </div>
+
+          {loading ? (
+            <div className="flex items-center justify-center py-12">
+              <div className="flex items-center gap-3 text-slate-500">
+                <div className="w-6 h-6 border-2 border-slate-200 border-t-[color:var(--rose)] rounded-full animate-spin"></div>
+                Loading bookings...
+              </div>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="table">
+                <thead>
+                  <tr>
+                    <th>Service</th>
+                    <th>Client</th>
+                    <th>Schedule</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r) => (
+                    <tr key={r.booking_id}>
+                      <td>
+                        <div className="font-medium text-slate-900">{r.service?.name}</div>
+                      </td>
+                      <td>
+                        <div className="space-y-1">
+                          <div className="font-medium text-slate-900">{r.client_name}</div>
+                          <div className="text-xs text-slate-500">
+                            {r.client_email}
+                            {r.client_phone && (
+                              <>
+                                <span className="mx-1">•</span>
+                                {r.client_phone}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium text-slate-900">{fmt(r.starts_at)}</div>
+                          <div className="text-xs text-slate-500">to {fmt(r.ends_at)}</div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`status-badge status-${r.status}`}>
+                          {r.status}
+                        </span>
+                      </td>
+                      <td>
+                        {r.status === "confirmed" ? (
+                          <button
+                            className="btn btn-danger btn-sm"
+                            onClick={async () => {
+                              if (!confirm("Are you sure you want to cancel this booking?")) return;
+                              try {
+                                await adminCancel(r.booking_id);
+                                setRows(rows => rows.map(row => 
+                                  row.booking_id === r.booking_id 
+                                    ? { ...row, status: "cancelled" }
+                                    : row
+                                ));
+                              } catch (e) {
+                                setErr(e.message || "Failed to cancel booking");
+                              }
+                            }}
+                          >
+                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            Cancel
+                          </button>
+                        ) : (
+                          <span className="text-slate-400 text-sm">-</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                  {rows.length === 0 && (
+                    <tr>
+                      <td colSpan="5" className="text-center py-12">
+                        <div className="flex flex-col items-center justify-center text-slate-500">
+                          <svg className="w-12 h-12 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <p>No bookings found</p>
+                          <p className="text-sm">New bookings will appear here</p>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
-      )}
-
-      {/* Bookings table */}
-      <div className="card p-4 mt-4 overflow-x-auto">
-        {loading ? (
-          <p className="text-slate-600">Loading…</p>
-        ) : (
-          <table className="min-w-full text-sm">
-            <thead className="text-left text-slate-600">
-              <tr className="[&_th]:py-2 [&_th]:pr-3">
-                <th>Service</th>
-                <th>Client</th>
-                <th>Starts</th>
-                <th>Ends</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody className="[&_td]:py-2 [&_td]:pr-3">
-              {rows.map((r) => (
-                <tr key={r.booking_id} className="border-t" style={{ borderColor: "var(--silver)" }}>
-                  <td>{r.service?.name}</td>
-                  <td>
-                    <div>{r.client_name}</div>
-                    <div className="text-xs text-slate-600">
-                      {r.client_email}
-                      {r.client_phone ? ` • ${r.client_phone}` : ""}
-                    </div>
-                  </td>
-                  <td>{fmt(r.starts_at)}</td>
-                  <td>{fmt(r.ends_at)}</td>
-                  <td className="capitalize">{r.status}</td>
-                  <td>
-                    {r.status === "confirmed" ? (
-                      <button
-                      className="btn btn-danger"
-                      onClick={async () => {
-                        try {
-                          await adminCancel(r.booking_id);  // Fixed: use 'r' instead of 'row'
-                          // refresh or update state
-                        } catch (e) {
-                          alert(e.message);
-                        }
-                      }}
-                    >
-                      Cancel
-                    </button>
-                    ) : (
-                      <span className="text-slate-500">-</span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-              {rows.length === 0 && (
-                <tr>
-                  <td colSpan="6" className="py-3 text-slate-600">
-                    No bookings yet.
-                  </td>
                 </tr>
               )}
             </tbody>
