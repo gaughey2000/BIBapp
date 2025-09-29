@@ -468,7 +468,6 @@ export default function UserBookingPage() {
               </div>
             </form>
           </section>
-          </section>
         )}
 
         {/* policy popup */}
