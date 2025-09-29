@@ -155,7 +155,6 @@ export default function UserBookingPage() {
   const serviceList = Array.isArray(services) ? services : [];
 
   return (
-    <div>
     <div className="min-h-screen bg-gradient-to-br from-white via-[color:var(--cream)] to-slate-50">
       <div className="container-narrow section-padding">
         {/* Header */}
@@ -503,9 +502,5 @@ export default function UserBookingPage() {
         )}
       </div>
     </div>
-  </div>
-</div>
-</div>
-</div>
   );
 }
