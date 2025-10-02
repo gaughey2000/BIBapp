@@ -1,5 +1,5 @@
 // DateTimeSelector.jsx - Date and time selection component
-import { DayPicker } from "react-day-picker";
+import LazyDatePicker from './LazyDatePicker';
 import "react-day-picker/dist/style.css";
 
 function formatTime(iso) {
@@ -51,7 +51,7 @@ export default function DateTimeSelector({
         {/* Calendar */}
         <div className="bg-white rounded-2xl p-6 border border-slate-100">
           <h3 className="text-lg font-medium text-slate-900 mb-4">Select date</h3>
-          <DayPicker
+          <LazyDatePicker
             mode="single"
             selected={date ? ymdToLocalDate(date) : undefined}
             onSelect={(d) => {

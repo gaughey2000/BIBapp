@@ -14,8 +14,23 @@ function setToken(t) {
   }
 }
 
-const json = (res) => {
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+const json = async (res) => {
+  if (!res.ok) {
+    // Try to get error details from response
+    let errorMessage = `HTTP ${res.status}`;
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch {
+      // If we can't parse JSON, use status text
+      errorMessage = res.statusText || errorMessage;
+    }
+    
+    const error = new Error(errorMessage);
+    error.status = res.status;
+    error.response = res;
+    throw error;
+  }
   return res.json();
 };
 
@@ -28,12 +43,36 @@ function withOpts(method = "GET", body) {
   return init;
 }
 
+// Enhanced fetch wrapper with better error handling
+async function apiCall(url, options = {}) {
+  try {
+    const response = await fetch(url, options);
+    return await json(response);
+  } catch (error) {
+    // Handle network errors
+    if (!navigator.onLine) {
+      const offlineError = new Error("No internet connection. Please check your network and try again.");
+      offlineError.type = "NETWORK_ERROR";
+      throw offlineError;
+    }
+    
+    if (error.name === 'TypeError' && error.message.includes('fetch')) {
+      const networkError = new Error("Unable to connect to server. Please try again later.");
+      networkError.type = "NETWORK_ERROR"; 
+      throw networkError;
+    }
+    
+    // Re-throw other errors as-is
+    throw error;
+  }
+}
+
 // ---------- public ----------
 export async function fetchServices() {
-  return fetch(`${BASE}/api/services`, withOpts()).then(json);
+  return apiCall(`${BASE}/api/services`, withOpts());
 }
 export async function fetchService(id) {
-  return fetch(`${BASE}/api/services/${id}`, withOpts()).then(json);
+  return apiCall(`${BASE}/api/services/${id}`, withOpts());
 }
 export async function fetchAvailability(arg1, arg2) {
   // Accept either: (serviceId, date) OR ({ serviceId, date })
@@ -66,7 +105,7 @@ export async function fetchAvailability(arg1, arg2) {
   return res.json();
 }
 export async function createBooking(input) {
-  return fetch(`${BASE}/api/bookings`, withOpts("POST", input)).then(json);
+  return apiCall(`${BASE}/api/bookings`, withOpts("POST", input));
 }
 
 // ---------- auth / admin ----------
