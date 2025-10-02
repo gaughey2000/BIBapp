@@ -49,6 +49,119 @@ A modern, full-stack beauty booking platform built with React and Express.js. Bo
 ### **DevOps**
 - 🚀 **Render** - Cloud deployment platform
 - 🧪 **Jest + Vitest** - Testing frameworks
+- 🔄 **GitHub Actions** - CI/CD pipelines
+
+## 🛠️ Local Development Setup
+
+### Prerequisites
+- Node.js 18+ 
+- PostgreSQL database
+- npm or yarn package manager
+
+### Quick Start
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/gaughey2000/BIBapp.git
+   cd BIBapp
+   ```
+
+2. **Set up the backend**
+   ```bash
+   cd server
+   cp .env.example .env
+   # Edit .env with your database connection details
+   npm install
+   npx prisma migrate dev
+   npm run seed
+   npm run dev
+   ```
+
+3. **Set up the frontend** (in a new terminal)
+   ```bash
+   cd client  
+   cp .env.example .env.local
+   # Edit .env.local with your API URL
+   npm install
+   npm run dev
+   ```
+
+4. **Access the application**
+   - Frontend: http://localhost:5173
+   - Backend API: http://localhost:3001
+   - Admin login: Use seeded credentials
+
+### Build for Production
+
+```bash
+# Backend
+cd server
+npm run prisma:deploy
+npm start
+
+# Frontend  
+cd client
+npm run build
+npm run preview
+```
+
+## 🧪 Running Tests
+
+```bash
+# Backend tests
+cd server
+npm test
+
+# Frontend tests
+cd client  
+npm test
+```
+
+## 🚀 Deployment
+
+### Render Deployment
+
+1. **Database Setup**
+   - Create a PostgreSQL database on Render
+   - Note the connection string
+
+2. **Backend Service**
+   - Connect your GitHub repository
+   - Set environment variables:
+     - `DATABASE_URL` (from step 1)
+     - `JWT_SECRET` (generate a strong secret)
+     - `CLIENT_URL` (your frontend URL)
+     - `NODE_ENV=production`
+   - Deploy with `npm run prisma:deploy && npm start`
+
+3. **Frontend Service**
+   - Connect your GitHub repository
+   - Set build command: `cd client && npm install && npm run build`
+   - Set publish directory: `client/dist`
+   - Set environment variable: `VITE_API_URL` (your backend URL)
+
+## 📁 Project Structure
+
+```
+BIBapp/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/     # Reusable UI components
+│   │   ├── pages/         # Page components
+│   │   ├── auth/          # Authentication logic
+│   │   └── api.js         # API client functions
+│   ├── public/            # Static assets
+│   └── dist/              # Production build
+├── server/                # Express backend
+│   ├── src/
+│   │   ├── routes/        # API routes
+│   │   ├── middleware/    # Custom middleware
+│   │   ├── config/        # Configuration files
+│   │   └── utils/         # Utility functions
+│   └── prisma/            # Database schema & migrations
+└── README.md
+```
+- 🧪 **Jest + Vitest** - Testing frameworks
 - 📦 **npm workspaces** - Monorepo management
 
 ## 📋 Prerequisites
