@@ -1,5 +1,5 @@
-// client/src/App.jsx
 import { Routes, Route } from "react-router-dom";
+import ErrorBoundary from "./components/ui/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -22,7 +22,7 @@ function NotFound() {
 
 export default function App() {
   return (
-    <>
+    <ErrorBoundary>
       <Navbar /> 
       <Routes>
         {/* Public */}
@@ -44,6 +44,6 @@ export default function App() {
         {/* 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </>
+    </ErrorBoundary>
   );
 }
