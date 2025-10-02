@@ -1,6 +1,7 @@
 // client/src/pages/HomePage.jsx
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import ReviewsCarousel from "../components/ReviewsCarousel";
 
 export default function HomePage() {
   const videoRef = useRef(null);
@@ -181,6 +182,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Client Reviews Section */}
+      <ReviewsCarousel />
     </main>
   );
 }
