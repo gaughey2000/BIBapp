@@ -82,7 +82,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden nav-frosted border-t border-[color:var(--rose)]/20 animate-fade-in-up">
+        <div className="md:hidden nav-frosted border-t border-[color:var(--rose)]/20 mobile-menu animate-slide-down">
           <nav className="container-narrow py-4 space-y-2">
             <NavLink 
               to="/book" 

@@ -208,7 +208,7 @@ export default function ReviewsCarousel() {
         {/* Google Reviews Link */}
         <div className="text-center mt-12">
           <a
-            href="https://g.page/r/YOUR_GOOGLE_BUSINESS_ID/review" 
+            href="https://www.google.com/search?q=BIB+Beauty+Clinic+reviews" 
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-full text-slate-700 hover:border-[color:var(--rose)] hover:text-[color:var(--rose)] transition-all duration-200 shadow-sm hover:shadow-md group"
