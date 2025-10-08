@@ -1,6 +1,7 @@
 import express from "express";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import morgan from "morgan";
 import { PrismaClient } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
@@ -11,6 +12,7 @@ import { ENV } from "./config/env.js";
 import { corsMiddleware } from "./middleware/cors.js";
 import { authCookieName, authCookieOptions } from "./utils/cookies.js";
 import { loginLimiter as loginGuard, bookingLimiter } from "./middleware/rateLimiters.js";
+import { BookingStatus, BookingConfig, TokenConfig } from "./constants.js";
 import {
   weekdayOf,
   toZonedDate,
@@ -20,13 +22,35 @@ import {
 
 // ---- app & db (exported for tests) ----
 export const app = express();
-export const prisma = new PrismaClient();
+export const prisma = new PrismaClient({
+  log: ENV.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+});
+
+// Test database connection on startup
+prisma.$connect()
+  .then(() => console.log('✅ Database connected'))
+  .catch((err) => {
+    console.error('❌ Database connection failed:', err.message);
+    process.exit(1);
+  });
+
+// Graceful shutdown
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
 
 // Trust Render/Cloudflare proxies (proper IPs, cookies, rate limiting)
 app.set("trust proxy", 1);
 
 // ---- core middleware ----
 app.use(helmet());
+
+// Request logging (skip in tests)
+if (ENV.NODE_ENV !== 'test') {
+  app.use(morgan(ENV.NODE_ENV === 'production' ? 'combined' : 'dev'));
+}
+
 // CORS must run before body parsers for OPTIONS to be short-circuited correctly
 app.use(corsMiddleware);
 // Handle preflight for every route (Safari is picky)
@@ -36,10 +60,8 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ---- helpers / security ----
-const BOOKING_MIN_ADVANCE_MIN = 60;
-
 function signToken(payload) {
-  return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: "2h" });
+  return jwt.sign(payload, ENV.JWT_SECRET, { expiresIn: TokenConfig.JWT_EXPIRES_IN });
 }
 
 // read token from cookie OR Authorization header
@@ -73,7 +95,7 @@ async function hasConflict(prisma, startLondon, endLondon) {
   const [bookingClash, blackoutClash] = await Promise.all([
     prisma.booking.findFirst({
       where: {
-        status: "confirmed",
+        status: BookingStatus.CONFIRMED,
         AND: [{ starts_at: { lt: endUTC } }, { ends_at: { gt: startUTC } }],
       },
       select: { booking_id: true },
@@ -90,7 +112,25 @@ async function hasConflict(prisma, startLondon, endLondon) {
 }
 
 // ---- routes ----
-app.get("/health", (_req, res) => res.json({ ok: true }));
+app.get("/health", async (_req, res) => {
+  const checks = {
+    server: 'ok',
+    database: 'unknown',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: ENV.NODE_ENV,
+  };
+
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    checks.database = 'ok';
+    res.json(checks);
+  } catch (err) {
+    checks.database = 'error';
+    checks.error = err.message;
+    res.status(503).json(checks);
+  }
+});
 
 // Services
 app.get("/api/services", async (_req, res) => {
@@ -145,7 +185,7 @@ app.get("/api/availability", async (req, res) => {
     const [bookings, blackouts] = await Promise.all([
       prisma.booking.findMany({
         where: {
-          status: "confirmed",
+          status: BookingStatus.CONFIRMED,
           OR: [
             { starts_at: { gte: dayStartUTC, lt: dayEndUTC } },
             { ends_at: { gt: dayStartUTC, lte: dayEndUTC } },
@@ -173,7 +213,7 @@ app.get("/api/availability", async (req, res) => {
       end: DateTime.fromJSDate(b.ends_at).setZone("Europe/London"),
     }));
 
-    const nowPlus = DateTime.now().setZone("Europe/London").plus({ minutes: BOOKING_MIN_ADVANCE_MIN });
+    const nowPlus = DateTime.now().setZone("Europe/London").plus({ minutes: BookingConfig.MIN_ADVANCE_MINUTES });
 
     const keep = candidates.filter((start) => {
       const end = start.plus({ minutes: service.duration_min + service.buffer_min });
@@ -219,11 +259,11 @@ app.post("/api/bookings", bookingLimiter, async (req, res) => {
     const startLondon = isoToLondon(starts_at);
     if (!startLondon.isValid) return res.status(400).json({ error: "Invalid starts_at" });
 
-    const earliest = DateTime.now().setZone("Europe/London").plus({ minutes: BOOKING_MIN_ADVANCE_MIN });
+    const earliest = DateTime.now().setZone("Europe/London").plus({ minutes: BookingConfig.MIN_ADVANCE_MINUTES });
     if (startLondon < earliest) {
       return res
         .status(400)
-        .json({ error: `Bookings must be at least ${BOOKING_MIN_ADVANCE_MIN} minutes in advance` });
+        .json({ error: `Bookings must be at least ${BookingConfig.MIN_ADVANCE_MINUTES} minutes in advance` });
     }
 
     const bh = await prisma.businessHour.findFirst({ where: { weekday: startLondon.weekday % 7 } });
@@ -321,9 +361,9 @@ app.post("/api/admin/bookings/:id/cancel", requireAdmin, async (req, res) => {
 
   const found = await prisma.booking.findUnique({ where: { booking_id: bookingId } });
   if (!found) return res.status(404).json({ error: "Not found" });
-  if (found.status === "cancelled") return res.json({ ok: true, message: "Already cancelled" });
+  if (found.status === BookingStatus.CANCELLED) return res.json({ ok: true, message: "Already cancelled" });
 
-  await prisma.booking.update({ where: { booking_id: bookingId }, data: { status: "cancelled" } });
+  await prisma.booking.update({ where: { booking_id: bookingId }, data: { status: BookingStatus.CANCELLED } });
   res.json({ ok: true });
 });
 
@@ -353,9 +393,8 @@ app.post("/api/admin/blackouts", requireAdmin, async (req, res) => {
   const ends = new Date(parsed.data.ends_at);
   if (!(starts < ends)) return res.status(400).json({ error: "ends_at must be after starts_at" });
 
-  const MAX_DAYS = 30;
-  if ((ends - starts) / (1000 * 60 * 60 * 24) > MAX_DAYS) {
-    return res.status(400).json({ error: `Blackout cannot exceed ${MAX_DAYS} days` });
+  if ((ends - starts) / (1000 * 60 * 60 * 24) > BookingConfig.MAX_BLACKOUT_DAYS) {
+    return res.status(400).json({ error: `Blackout cannot exceed ${BookingConfig.MAX_BLACKOUT_DAYS} days` });
   }
 
   const created = await prisma.blackoutSlot.create({
