@@ -32,9 +32,10 @@ model Service {
   buffer_min     Int           @default(15)
   is_active      Boolean       @default(true)
   more_info      String?       @db.Text
-  treatment_type TreatmentType @default(OTHER_SERVICES) // <-- this line
+  treatment_type TreatmentType @default(OTHER_SERVICES)
   Booking        Booking[]
 
+  @@index([is_active])
   @@index([treatment_type, name])
 }
 
@@ -50,6 +51,8 @@ model BlackoutSlot {
   starts_at DateTime @db.Timestamptz(6)
   ends_at   DateTime @db.Timestamptz(6)
   reason    String?
+
+  @@index([starts_at, ends_at])
 }
 
 model Booking {
@@ -64,4 +67,10 @@ model Booking {
   status       String   @default("confirmed")
   created_at   DateTime @default(now())
   cancel_token String?  @unique
+
+  @@index([starts_at, ends_at])
+  @@index([status])
+  @@index([client_email])
+  @@index([created_at])
+  @@index([service_id])
 }
