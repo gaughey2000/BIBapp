@@ -4,7 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import AdminLogin from "../pages/AdminLogin";
 
 vi.mock("../api", () => ({
-  adminLogin: vi.fn().mockRejectedValue({ response: { data: { error: "Invalid credentials" } } }),
+  login: vi.fn().mockRejectedValue({ response: { data: { error: "Invalid credentials" } } }),
 }));
 vi.mock("../auth/AuthContext", () => ({
   useAuth: () => ({ refetchMe: vi.fn() }),

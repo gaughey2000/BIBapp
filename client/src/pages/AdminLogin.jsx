@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { adminLogin } from "../api";
+import { login } from "../api";
 import { useAuth } from "../auth/useAuth";
 
 export default function AdminLogin() {
@@ -18,7 +18,7 @@ export default function AdminLogin() {
     setErr("");
     setLoading(true);
     try {
-      await adminLogin({ email, password }); 
+      await login(email, password); 
       await refetchMe();
       const dest = location.state?.from?.pathname || "/admin";
       navigate(dest, { replace: true });

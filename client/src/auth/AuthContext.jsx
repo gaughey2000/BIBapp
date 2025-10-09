@@ -1,5 +1,5 @@
 import { createContext, useEffect, useMemo, useState } from "react";
-import { whoAmI, adminLogout } from "../api";
+import { whoAmI, logout as apiLogout } from "../api";
 
 export const AuthCtx = createContext(null);
 
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
 
   const logout = async () => {
     try { 
-      await adminLogout(); 
+      await apiLogout(); 
     } catch (error) {
       console.warn('Logout request failed:', error.message);
     }
