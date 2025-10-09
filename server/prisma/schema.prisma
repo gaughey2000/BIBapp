@@ -33,44 +33,8 @@ model Service {
   is_active      Boolean       @default(true)
   more_info      String?       @db.Text
   treatment_type TreatmentType @default(OTHER_SERVICES)
-  Booking        Booking[]
 
   @@index([is_active])
   @@index([treatment_type, name])
 }
 
-model BusinessHour {
-  id         Int    @id @default(autoincrement())
-  weekday    Int // 0=Sun..6=Sat
-  open_time  String // "10:00"
-  close_time String // "18:00"
-}
-
-model BlackoutSlot {
-  id        Int      @id @default(autoincrement())
-  starts_at DateTime @db.Timestamptz(6)
-  ends_at   DateTime @db.Timestamptz(6)
-  reason    String?
-
-  @@index([starts_at, ends_at])
-}
-
-model Booking {
-  booking_id   String   @id @default(uuid())
-  service_id   Int
-  service      Service  @relation(fields: [service_id], references: [service_id], onDelete: Restrict)
-  client_name  String
-  client_email String
-  client_phone String?
-  starts_at    DateTime @db.Timestamptz(6)
-  ends_at      DateTime @db.Timestamptz(6)
-  status       String   @default("confirmed")
-  created_at   DateTime @default(now())
-  cancel_token String?  @unique
-
-  @@index([starts_at, ends_at])
-  @@index([status])
-  @@index([client_email])
-  @@index([created_at])
-  @@index([service_id])
-}

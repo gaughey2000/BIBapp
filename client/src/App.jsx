@@ -7,7 +7,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import ServicesPage from "./pages/ServicesPage";
 import ServiceDetailPage from "./pages/ServiceDetailPage";
-import UserBookingPage from "./pages/UserBookingPage";
+import ExternalBooking from "./pages/ExternalBooking";
 import ContactPage from "./pages/ContactPage";
 import AboutPage from "./pages/AboutPage";
 
@@ -29,7 +29,7 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/services" element={<ServicesPage />} />
         <Route path="/services/:id" element={<ServiceDetailPage />} />
-        <Route path="/book" element={<UserBookingPage />} />
+        <Route path="/book" element={<ExternalBooking />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
 

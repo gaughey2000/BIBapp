@@ -1,454 +1,390 @@
-import { useEffect, useState } from "react";
-import {
-  whoAmI,
-  fetchAdminBookings,
-  adminCancel,
-  adminLogout,
-  adminListBlackouts,
-  adminCreateBlackout,
-  adminDeleteBlackout,
-} from "../api";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../auth/useAuth";
-import FullCalendar from "@fullcalendar/react";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-
-function fmt(dt) {
-  return new Date(dt).toLocaleString("en-GB");
-}
+// client/src/pages/AdminDashboard-Simplified.jsx
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../api';
 
 export default function AdminDashboard() {
-  const nav = useNavigate();
-  const { setAuthed } = useAuth();
-
-  // Auth / status
-  const [me, setMe] = useState(null);
-  const [err, setErr] = useState("");
-
-  // Bookings
-  const [rows, setRows] = useState([]);
+  const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [editingService, setEditingService] = useState(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const navigate = useNavigate();
 
-  // Blackouts
-  const [bos, setBos] = useState([]);
-  const [bErr, setBErr] = useState("");
-  const [bLoading, setBLoading] = useState(false);
-
-  // Blackout form
-  const [startDate, setStartDate] = useState(""); // YYYY-MM-DD
-  const [startTime, setStartTime] = useState("09:00");
-  const [endDate, setEndDate] = useState("");
-  const [endTime, setEndTime] = useState("17:00");
-  const [reason, setReason] = useState("");
-  const [wholeDay, setWholeDay] = useState(false);
+  const treatmentTypes = [
+    { value: 'BOTULINUM_TOXIN', label: 'Botulinum Toxin' },
+    { value: 'DERMAL_FILLER', label: 'Dermal Filler' },
+    { value: 'CHEMICAL_PEELS', label: 'Chemical Peels' },
+    { value: 'SKIN_CARE', label: 'Skin Care' },
+    { value: 'OTHER_SERVICES', label: 'Other Services' },
+  ];
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const m = await whoAmI();
-        if (!mounted) return;
-        setMe(m);
-        const [bookings, blackouts] = await Promise.all([
-          fetchAdminBookings(),
-          adminListBlackouts(),
-        ]);
-        if (!mounted) return;
-        setRows(bookings);
-        setBos(blackouts.slice().sort((a, b) => new Date(a.starts_at) - new Date(b.starts_at)));
-      } catch {
-        nav("/admin/login");
-      } finally {
-        if (mounted) setLoading(false);
+    fetchServices();
+  }, []);
+
+  async function fetchServices() {
+    try {
+      setLoading(true);
+      const data = await api.getAdminServices();
+      setServices(data);
+    } catch (err) {
+      console.error('Failed to fetch services:', err);
+      if (err.message.includes('401') || err.message.includes('Unauthorized')) {
+        navigate('/admin/login');
       }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, [nav]);
-
-  async function doLogout() {
-    try {
-      await adminLogout();
     } finally {
-      setAuthed?.(false);
-      nav("/admin/login", { replace: true });
+      setLoading(false);
     }
   }
 
-  async function createBlackout(e) {
-    e?.preventDefault?.();
-    setBErr("");
-
+  async function handleLogout() {
     try {
-      if (!startDate) throw new Error("Pick a start date");
+      await api.logout();
+      navigate('/admin/login');
+    } catch (err) {
+      console.error('Logout error:', err);
+      navigate('/admin/login');
+    }
+  }
 
-      const sd = startDate;
-      const ed = wholeDay ? startDate : endDate;
-      const st = wholeDay ? "00:00" : (startTime || "00:00");
-      const et = wholeDay ? "23:59" : (endTime || "23:59");
+  async function handleSaveService(serviceData) {
+    try {
+      if (editingService) {
+        await api.updateService(editingService.service_id, serviceData);
+      } else {
+        await api.createService(serviceData);
+      }
+      await fetchServices();
+      setEditingService(null);
+      setShowAddForm(false);
+    } catch (err) {
+      console.error('Failed to save service:', err);
+      alert('Failed to save service');
+    }
+  }
 
-      if (!ed) throw new Error("Pick an end date");
+  async function handleDeleteService(serviceId) {
+    if (!confirm('Are you sure you want to delete this service?')) return;
+    try {
+      await api.deleteService(serviceId);
+      await fetchServices();
+    } catch (err) {
+      console.error('Failed to delete service:', err);
+      alert('Failed to delete service');
+    }
+  }
 
-      const starts_at = new Date(`${sd}T${st}:00`);
-      const ends_at = new Date(`${ed}T${et}:00`);
-      if (!(starts_at < ends_at)) throw new Error("End must be after start");
-
-      setBLoading(true);
-      const created = await adminCreateBlackout({
-        starts_at: starts_at.toISOString(),
-        ends_at: ends_at.toISOString(),
-        reason: reason || undefined,
+  async function handleToggleActive(service) {
+    try {
+      await api.updateService(service.service_id, {
+        is_active: !service.is_active,
       });
-
-      setBos((b) => [...b, created].sort((a, bb) => new Date(a.starts_at) - new Date(bb.starts_at)));
-      setReason("");
-      if (wholeDay) setEndDate(sd);
-    } catch (e2) {
-      setBErr(e2?.response?.data?.error || e2.message || "Failed to create blackout");
-    } finally {
-      setBLoading(false);
+      await fetchServices();
+    } catch (err) {
+      console.error('Failed to toggle service:', err);
+      alert('Failed to update service');
     }
   }
 
-  async function deleteBlackout(id) {
-    try {
-      await adminDeleteBlackout(id);
-      setBos((b) => b.filter((x) => x.id !== id));
-    } catch {
-      setBErr("Delete failed");
-    }
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[color:var(--cream)] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-[color:var(--rose)] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-[color:var(--cream)]">
-      <div className="container-narrow py-8">
+    <div className="min-h-screen bg-[color:var(--cream)] py-8">
+      <div className="container-narrow">
         {/* Header */}
-        <div className="card-elevated p-6 mb-8 animate-fade-in-up">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Admin Dashboard</h1>
-              <p className="text-slate-600 mt-1">Manage bookings and availability</p>
-            </div>
-            <div className="flex items-center gap-4">
-              {me && (
-                <div className="text-right">
-                  <div className="text-sm font-medium text-slate-700">Welcome back</div>
-                  <div className="text-sm text-slate-500">{me.email}</div>
-                </div>
-              )}
-              <button 
-                onClick={doLogout} 
-                className="btn btn-secondary group"
-              >
-                <svg className="w-4 h-4 group-hover:rotate-12 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                </svg>
-                Logout
-              </button>
-            </div>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-[color:var(--ink)] mb-2">
+              Admin Dashboard
+            </h1>
+            <p className="text-slate-600">Manage your treatments and services</p>
           </div>
-
-          {err && (
-            <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm animate-fade-in-up">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                {err}
-              </div>
-            </div>
-          )}
+          <button
+            onClick={handleLogout}
+            className="btn-secondary"
+          >
+            Logout
+          </button>
         </div>
 
-        {/* Bookings table */}
-        <div className="card-elevated p-6 mb-8 animate-fade-in-up">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-semibold text-slate-900">Recent Bookings</h2>
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              Last updated: {new Date().toLocaleTimeString()}
-            </div>
-          </div>
-
-          {loading ? (
-            <div className="flex items-center justify-center py-12">
-              <div className="flex items-center gap-3 text-slate-500">
-                <div className="w-6 h-6 border-2 border-slate-200 border-t-[color:var(--rose)] rounded-full animate-spin"></div>
-                Loading bookings...
-              </div>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="table">
-                <thead>
-                  <tr>
-                    <th>Service</th>
-                    <th>Client</th>
-                    <th>Schedule</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {rows.map((r) => (
-                    <tr key={r.booking_id}>
-                      <td>
-                        <div className="font-medium text-slate-900">{r.service?.name}</div>
-                      </td>
-                      <td>
-                        <div className="space-y-1">
-                          <div className="font-medium text-slate-900">{r.client_name}</div>
-                          <div className="text-xs text-slate-500">
-                            {r.client_email}
-                            {r.client_phone && (
-                              <>
-                                <span className="mx-1">•</span>
-                                {r.client_phone}
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium text-slate-900">{fmt(r.starts_at)}</div>
-                          <div className="text-xs text-slate-500">to {fmt(r.ends_at)}</div>
-                        </div>
-                      </td>
-                      <td>
-                        <span className={`status-badge status-${r.status}`}>
-                          {r.status}
-                        </span>
-                      </td>
-                      <td>
-                        {r.status === "confirmed" ? (
-                          <button
-                            className="btn btn-danger btn-sm"
-                            onClick={async () => {
-                              if (!confirm("Are you sure you want to cancel this booking?")) return;
-                              try {
-                                await adminCancel(r.booking_id);
-                                setRows(rows => rows.map(row => 
-                                  row.booking_id === r.booking_id 
-                                    ? { ...row, status: "cancelled" }
-                                    : row
-                                ));
-                              } catch (e) {
-                                setErr(e.message || "Failed to cancel booking");
-                              }
-                            }}
-                          >
-                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                            Cancel
-                          </button>
-                        ) : (
-                          <span className="text-slate-400 text-sm">-</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                  {rows.length === 0 && (
-                    <tr>
-                      <td colSpan="5" className="text-center py-12">
-                        <div className="flex flex-col items-center justify-center text-slate-500">
-                          <svg className="w-12 h-12 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <p>No bookings found</p>
-                          <p className="text-sm">New bookings will appear here</p>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-      {/* Calendar */}
-      <section className="mt-6">
-        <h2 className="text-xl font-semibold tracking-tight">Calendar</h2>
-        <p className="mt-1 text-sm text-slate-600">
-          <span className="inline-block w-3 h-3 align-middle mr-1" style={{ background: "#0b82f0" }} /> Bookings
-          <span className="inline-block w-3 h-3 align-middle mx-4" style={{ background: "#c62828" }} /> Blackouts
-        </p>
-
-        <div className="card p-3 mt-2">
-          <FullCalendar
-            plugins={[dayGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            height="auto"
-            selectable
-            selectMirror
-            longPressDelay={0}
-            events={[
-              ...rows.map((r) => ({
-                id: r.booking_id,
-                title: `${r.service?.name} — ${r.client_name}`,
-                start: r.starts_at,
-                end: r.ends_at,
-                color: "#0b82f0",
-              })),
-              ...bos.map((b) => ({
-                id: `bo-${b.id}`,
-                title: b.reason || "Blackout",
-                start: b.starts_at,
-                end: b.ends_at,
-                color: "#c62828",
-              })),
-            ]}
-            selectAllow={(info) => info.start >= new Date(new Date().toDateString())}
-            select={async (info) => {
-              const ok = confirm(
-                `Create blackout from ${info.start.toLocaleString("en-GB")} to ${info.end.toLocaleString("en-GB")}?`
-              );
-              if (!ok) return;
-              try {
-                const created = await adminCreateBlackout({
-                  starts_at: info.start.toISOString(),
-                  ends_at: info.end.toISOString(),
-                  reason: "Blocked from calendar",
-                });
-                setBos((b) =>
-                  [...b, created].sort((a, bb) => new Date(a.starts_at) - new Date(bb.starts_at))
-                );
-              } catch {
-                alert("Failed to create blackout");
-              }
-            }}
-            eventDisplay="block"
-          />
-        </div>
-      </section>
-
-      {/* Blackouts manager */}
-      <section className="mt-6">
-        <h2 className="text-xl font-semibold tracking-tight">Schedule — Blackouts</h2>
-        {bErr && (
-          <div className="mt-2 card p-3 text-sm text-red-700 bg-red-50/70">
-            {bErr}
+        {/* Add Service Button */}
+        {!showAddForm && !editingService && (
+          <div className="mb-6">
+            <button
+              onClick={() => setShowAddForm(true)}
+              className="btn-primary"
+            >
+              + Add New Service
+            </button>
           </div>
         )}
 
-        <form onSubmit={createBlackout} className="mt-3 card p-4 grid gap-3 max-w-xl">
-          <label className="flex items-center gap-2">
-            <input
-              type="checkbox"
-              checked={wholeDay}
-              onChange={(e) => {
-                const chk = e.target.checked;
-                setWholeDay(chk);
-                if (chk && startDate) setEndDate(startDate);
-              }}
-            />
-            <span>Block whole day</span>
-          </label>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <label className="grid gap-1">
-              <span className="text-sm text-slate-700">Start date</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => {
-                  setStartDate(e.target.value);
-                  if (wholeDay) setEndDate(e.target.value);
-                }}
-                className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
-                style={{ border: "1px solid var(--silver)" }}
-              />
-            </label>
-            <label className="grid gap-1">
-              <span className="text-sm text-slate-700">Start time</span>
-              <input
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-                disabled={wholeDay}
-                className="rounded-lg px-3 py-2 bg-white/70 outline-none disabled:opacity-60 focus:ring-2 ring-rose-300"
-                style={{ border: "1px solid var(--silver)" }}
-              />
-            </label>
-            <label className="grid gap-1">
-              <span className="text-sm text-slate-700">End date</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                disabled={wholeDay}
-                className="rounded-lg px-3 py-2 bg-white/70 outline-none disabled:opacity-60 focus:ring-2 ring-rose-300"
-                style={{ border: "1px solid var(--silver)" }}
-              />
-            </label>
-            <label className="grid gap-1">
-              <span className="text-sm text-slate-700">End time</span>
-              <input
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-                disabled={wholeDay}
-                className="rounded-lg px-3 py-2 bg-white/70 outline-none disabled:opacity-60 focus:ring-2 ring-rose-300"
-                style={{ border: "1px solid var(--silver)" }}
-              />
-            </label>
-          </div>
-
-          <input
-            placeholder="Reason (optional)"
-            value={reason}
-            onChange={(e) => setReason(e.target.value)}
-            className="rounded-lg px-3 py-2 bg-white/70 outline-none focus:ring-2 ring-rose-300"
-            style={{ border: "1px solid var(--silver)" }}
+        {/* Add/Edit Form */}
+        {(showAddForm || editingService) && (
+          <ServiceForm
+            service={editingService}
+            treatmentTypes={treatmentTypes}
+            onSave={handleSaveService}
+            onCancel={() => {
+              setEditingService(null);
+              setShowAddForm(false);
+            }}
           />
-          <div>
-            <button type="submit" disabled={bLoading} className="btn btn-primary">
-              {bLoading ? "Saving…" : "Add blackout"}
-            </button>
-          </div>
-        </form>
+        )}
 
-        <div className="card p-4 mt-4 overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="text-left text-slate-600">
-              <tr className="[&_th]:py-2 [&_th]:pr-3">
-                <th>ID</th>
-                <th>Starts</th>
-                <th>Ends</th>
-                <th>Reason</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody className="[&_td]:py-2 [&_td]:pr-3">
-              {bos.map((b) => (
-                <tr key={b.id} className="border-t" style={{ borderColor: "var(--silver)" }}>
-                  <td>{b.id}</td>
-                  <td>{fmt(b.starts_at)}</td>
-                  <td>{fmt(b.ends_at)}</td>
-                  <td>{b.reason || "-"}</td>
-                  <td>
-                    <button onClick={() => deleteBlackout(b.id)} className="btn btn-ghost">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+        {/* Services List */}
+        <div className="card p-6">
+          <h2 className="text-xl font-semibold text-[color:var(--ink)] mb-4">
+            All Services ({services.length})
+          </h2>
+          
+          {services.length === 0 ? (
+            <p className="text-slate-600 text-center py-8">
+              No services yet. Add your first service above.
+            </p>
+          ) : (
+            <div className="space-y-4">
+              {services.map((service) => (
+                <div
+                  key={service.service_id}
+                  className="border border-slate-200 rounded-lg p-4 hover:border-[color:var(--rose)]/30 transition-colors"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-3 mb-2">
+                        <h3 className="text-lg font-medium text-[color:var(--ink)]">
+                          {service.name}
+                        </h3>
+                        <span
+                          className={`px-2 py-1 rounded text-xs font-medium ${
+                            service.is_active
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-gray-100 text-gray-700'
+                          }`}
+                        >
+                          {service.is_active ? 'Active' : 'Inactive'}
+                        </span>
+                        <span className="px-2 py-1 rounded text-xs font-medium bg-slate-100 text-slate-700">
+                          {treatmentTypes.find((t) => t.value === service.treatment_type)?.label || service.treatment_type}
+                        </span>
+                      </div>
+                      {service.description && (
+                        <p className="text-slate-600 text-sm mb-2">
+                          {service.description}
+                        </p>
+                      )}
+                      <div className="flex gap-4 text-sm text-slate-600">
+                        <span>£{(service.price_cents / 100).toFixed(2)}</span>
+                        <span>•</span>
+                        <span>{service.duration_min} min</span>
+                        {service.buffer_min > 0 && (
+                          <>
+                            <span>•</span>
+                            <span>{service.buffer_min} min buffer</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <button
+                        onClick={() => handleToggleActive(service)}
+                        className="px-3 py-1 text-sm rounded border border-slate-300 hover:bg-slate-50 transition-colors"
+                      >
+                        {service.is_active ? 'Deactivate' : 'Activate'}
+                      </button>
+                      <button
+                        onClick={() => setEditingService(service)}
+                        className="px-3 py-1 text-sm rounded bg-[color:var(--rose)] text-white hover:bg-[color:var(--rose-dark)] transition-colors"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteService(service.service_id)}
+                        className="px-3 py-1 text-sm rounded border border-red-300 text-red-600 hover:bg-red-50 transition-colors"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
               ))}
-              {bos.length === 0 && (
-                <tr>
-                  <td colSpan="5" className="py-3 text-slate-600">No blackouts</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+            </div>
+          )}
         </div>
-      </section>
+      </div>
     </div>
-  </div>
+  );
+}
+
+function ServiceForm({ service, treatmentTypes, onSave, onCancel }) {
+  const [formData, setFormData] = useState({
+    name: service?.name || '',
+    description: service?.description || '',
+    price_cents: service?.price_cents || 0,
+    duration_min: service?.duration_min || 30,
+    buffer_min: service?.buffer_min || 15,
+    is_active: service?.is_active ?? true,
+    treatment_type: service?.treatment_type || 'OTHER_SERVICES',
+    more_info: service?.more_info || '',
+  });
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    onSave(formData);
+  }
+
+  return (
+    <div className="card p-6 mb-6">
+      <h2 className="text-xl font-semibold text-[color:var(--ink)] mb-4">
+        {service ? 'Edit Service' : 'Add New Service'}
+      </h2>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Service Name *
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Treatment Type *
+            </label>
+            <select
+              required
+              value={formData.treatment_type}
+              onChange={(e) =>
+                setFormData({ ...formData, treatment_type: e.target.value })
+              }
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+            >
+              {treatmentTypes.map((type) => (
+                <option key={type.value} value={type.value}>
+                  {type.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Description
+          </label>
+          <textarea
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.target.value })
+            }
+            rows={2}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Price (£) *
+            </label>
+            <input
+              type="number"
+              required
+              step="0.01"
+              min="0"
+              value={(formData.price_cents / 100).toFixed(2)}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  price_cents: Math.round(parseFloat(e.target.value) * 100),
+                })
+              }
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Duration (min) *
+            </label>
+            <input
+              type="number"
+              required
+              min="1"
+              value={formData.duration_min}
+              onChange={(e) =>
+                setFormData({ ...formData, duration_min: parseInt(e.target.value) })
+              }
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Buffer (min)
+            </label>
+            <input
+              type="number"
+              min="0"
+              value={formData.buffer_min}
+              onChange={(e) =>
+                setFormData({ ...formData, buffer_min: parseInt(e.target.value) })
+              }
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">
+            Additional Information
+          </label>
+          <textarea
+            value={formData.more_info}
+            onChange={(e) =>
+              setFormData({ ...formData, more_info: e.target.value })
+            }
+            rows={3}
+            className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-[color:var(--rose)] focus:border-transparent"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            id="is_active"
+            checked={formData.is_active}
+            onChange={(e) =>
+              setFormData({ ...formData, is_active: e.target.checked })
+            }
+            className="w-4 h-4 text-[color:var(--rose)] border-slate-300 rounded focus:ring-[color:var(--rose)]"
+          />
+          <label htmlFor="is_active" className="text-sm font-medium text-slate-700">
+            Active (visible to customers)
+          </label>
+        </div>
+
+        <div className="flex gap-3 pt-4">
+          <button type="submit" className="btn-primary">
+            {service ? 'Update Service' : 'Add Service'}
+          </button>
+          <button type="button" onClick={onCancel} className="btn-secondary">
+            Cancel
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
