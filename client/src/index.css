@@ -24,7 +24,7 @@ body {
 
 /* Custom component styles using Tailwind classes */
 .container-narrow { 
-  @apply max-w-6xl mx-auto px-4; 
+  @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8; 
 }
 
 .card {
@@ -46,7 +46,8 @@ body {
 .btn {
   @apply inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-sm 
          border border-transparent cursor-pointer transition-all duration-200 focus:outline-none 
-         focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+         focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed
+         active:scale-95;
 }
 
 .btn-primary {
@@ -82,7 +83,7 @@ body {
 }
 
 .btn-lg {
-  @apply px-8 py-4 text-base;
+  @apply px-6 py-3 sm:px-8 sm:py-4 text-sm sm:text-base;
 }
 
 .input, .textarea, .select {
@@ -138,7 +139,15 @@ body {
 }
 
 .section-padding {
-  @apply py-12 md:py-16 lg:py-20;
+  @apply py-8 sm:py-12 md:py-16 lg:py-20;
+}
+
+/* Mobile-optimized touch targets */
+@media (max-width: 640px) {
+  .btn, button, a[class*="btn"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 .loading {
