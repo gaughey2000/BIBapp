@@ -1,5 +1,6 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
+import Footer from "./Footer";
 
 export default function Layout() {
   return (
@@ -8,12 +9,7 @@ export default function Layout() {
       <main className="flex-1">
         <Outlet />
       </main>
-      <footer style={{ borderTop: "1px solid var(--silver)" }}>
-        <div className="container-narrow h-16 flex items-center justify-between text-sm text-slate-600">
-          <span>© {new Date().getFullYear()} BIB Clinic</span>
-          <Link to="/admin/login" className="hover:underline">Admin</Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
