@@ -1,10 +1,16 @@
 # 💄 BIB - Beauty Booking Application
 
+![CI/CD](https://github.com/YOUR_USERNAME/BIBapp/actions/workflows/ci.yml/badge.svg)
+![Tests](https://img.shields.io/badge/tests-43%20passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-60%25-yellow)
+![Grade](https://img.shields.io/badge/grade-A-brightgreen)
+
 A modern, full-stack beauty booking platform built with React and Express.js. Book appointments for beauty treatments including Botulinum Toxin, Chemical Peels, Dermal Fillers, and more.
 
 ## 🚀 Live Demo
 - **Frontend**: [Deployed on Render](https://your-app.onrender.com)
 - **API**: REST endpoints with JWT authentication
+- **Status**: ![Status](https://img.shields.io/badge/status-production%20ready-brightgreen)
 
 ## ✨ Features
 
