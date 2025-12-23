@@ -44,7 +44,7 @@ export default function HomePage() {
       <section className="py-2 sm:py-4 lg:py-8">
         <div
           className="container-narrow grid items-center gap-4 lg:gap-16 lg:grid-cols-2"
-          style={{ minHeight: "calc(100svh - 64px)" }}
+          style={{ minHeight: "calc(100svh - 160px)" }}
         >
           {/* Left: Copy */}
           <div className="py-2 sm:py-4 md:py-6 lg:py-0 animate-fade-in-up order-2 lg:order-1">
@@ -178,8 +178,8 @@ export default function HomePage() {
                 />
 
                 {/* Gradient overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
+                <div className="video-overlay absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                <div className="video-overlay absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
 
                 {/* Controls - Mobile */}
                 <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 transition-opacity duration-300">
@@ -238,8 +238,8 @@ export default function HomePage() {
                 />
 
                 {/* Gradient overlays */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
+                <div className="video-overlay absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                <div className="video-overlay absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
 
                 {/* Controls - Desktop */}
                 <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex gap-2 sm:gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

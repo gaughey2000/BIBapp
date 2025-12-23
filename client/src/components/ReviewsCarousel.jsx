@@ -9,7 +9,7 @@ export default function ReviewsCarousel() {
   }, []);
 
   return (
-    <section className="pt-2 pb-8 sm:pt-4 sm:pb-10 md:pt-6 md:pb-12 bg-gradient-to-br from-slate-50 to-white">
+    <section className="pt-1 pb-6 sm:pt-2 sm:pb-8 md:pt-4 md:pb-10 bg-gradient-to-br from-slate-50 to-white">
       <div className="container-narrow">
         {/* Header */}
         <div className="text-center mb-8 sm:mb-10 animate-fade-in-up px-4">

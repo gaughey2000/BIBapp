@@ -295,7 +295,7 @@ html.dark div {
 /* Override page-specific backgrounds in dark mode - AGGRESSIVE */
 html.dark main,
 html.dark section,
-html.dark div[class*="bg-gradient"],
+html.dark div[class*="bg-gradient"]:not(.video-overlay),
 html.dark div[class*="min-h-screen"] {
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
 }
