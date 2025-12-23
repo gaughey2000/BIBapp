@@ -38,18 +38,18 @@ export default function HomePage() {
   return (
     <main
       id="main"
-      className="bg-gradient-to-br from-white via-[color:var(--cream)] to-slate-50"
+      className="min-h-screen bg-gradient-to-br from-white via-[color:var(--cream)] to-slate-50"
     >
       {/* Hero */}
-      <section className="section-padding">
+      <section className="py-2 sm:py-4 lg:py-8">
         <div
-          className="container-narrow grid items-center gap-8 lg:gap-16 lg:grid-cols-2"
+          className="container-narrow grid items-center gap-4 lg:gap-16 lg:grid-cols-2"
           style={{ minHeight: "calc(100svh - 64px)" }}
         >
           {/* Left: Copy */}
-          <div className="py-6 md:py-10 lg:py-0 animate-fade-in-up order-2 lg:order-1">
-            <div className="mb-6 md:mb-8">
-              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[color:var(--rose)]/10 rounded-full text-xs sm:text-sm font-medium text-[color:var(--rose)] mb-4 sm:mb-6">
+          <div className="py-2 sm:py-4 md:py-6 lg:py-0 animate-fade-in-up order-2 lg:order-1">
+            <div className="mb-4 md:mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[color:var(--rose)]/10 rounded-full text-xs sm:text-sm font-medium text-[color:var(--rose)] mb-3 sm:mb-4">
                 <svg
                   className="w-3 h-3 sm:w-4 sm:h-4"
                   fill="currentColor"
@@ -65,20 +65,20 @@ export default function HomePage() {
               </div>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900 mb-4 sm:mb-6">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900 mb-3 sm:mb-4">
               Natural beauty,{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--rose-dark)]">
                 enhanced with care
               </span>
             </h1>
 
-            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mb-6 sm:mb-8 leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mb-5 sm:mb-6 leading-relaxed">
               Evidence-based treatments with flexible appointments, delivered
               with professionalism and a personal touch that makes all the
               difference.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-6 sm:mb-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-5 sm:mb-6">
               <Link to="/book" className="btn btn-primary btn-lg group w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-200"
@@ -161,108 +161,128 @@ export default function HomePage() {
           </div>
 
           {/* Right: Video */}
-          <div className="relative w-full max-w-2xl mx-auto lg:ml-auto animate-fade-in-up lg:animate-slide-in-right order-1 lg:order-2">
-            <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl border border-slate-200/50 shadow-xl sm:shadow-2xl bg-white/10 backdrop-blur-sm aspect-video group">
-              <video
-                ref={videoRef}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                src="/WelcomeVideo.mp4"
-                autoPlay
-                loop
-                playsInline
-                muted={muted}
-              />
+          <div className="order-1 lg:order-2">
+            {/* Mobile: Full width video breaking out of container */}
+            <div className="lg:hidden relative animate-fade-in-up -mx-4 sm:-mx-6 lg:mx-0">
+              <div className="relative overflow-hidden aspect-video group video-container" style={{
+                width: '100vw'
+              }}>
+                <video
+                  ref={videoRef}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src="/WelcomeVideo.mp4"
+                  autoPlay
+                  loop
+                  playsInline
+                  muted={muted}
+                />
 
-              {/* Gradient overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
+                {/* Gradient overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
 
-              {/* Controls */}
-              <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex gap-2 sm:gap-3 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
-                <button
-                  onClick={toggleMute}
-                  className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/25 backdrop-blur-md 
-                           border border-white/40 text-white shadow-lg hover:bg-white/35 
-                           focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
-                           hover:scale-110 active:scale-95"
-                  aria-label={muted ? "Unmute video" : "Mute video"}
-                >
-                  {muted ? (
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-4 h-4"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                      />
-                    </svg>
-                  )}
-                </button>
-                <button
-                  onClick={togglePause}
-                  className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/25 backdrop-blur-md 
-                           border border-white/40 text-white shadow-lg hover:bg-white/35 
-                           focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
-                           hover:scale-110 active:scale-95"
-                  aria-label={paused ? "Play video" : "Pause video"}
-                >
-                  {paused ? (
-                    <svg
-                      className="w-4 h-4 ml-0.5"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="w-4 h-4"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zM7 8a1 1 0 012 0v4a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v4a1 1 0 102 0V8a1 1 0 00-1-1z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </button>
+                {/* Controls - Mobile */}
+                <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={toggleMute}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white/25 backdrop-blur-md 
+                             border border-white/40 text-white shadow-lg hover:bg-white/35 
+                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
+                             hover:scale-110 active:scale-95"
+                    aria-label={muted ? "Unmute video" : "Mute video"}
+                  >
+                    {muted ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={togglePause}
+                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white/25 backdrop-blur-md 
+                             border border-white/40 text-white shadow-lg hover:bg-white/35 
+                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
+                             hover:scale-110 active:scale-95"
+                    aria-label={paused ? "Play video" : "Pause video"}
+                  >
+                    {paused ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m2 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
-            {/* Decorative elements - hidden on mobile for cleaner look */}
-            <div className="hidden sm:block absolute -top-4 -right-4 w-20 h-20 sm:w-24 sm:h-24 bg-gradient-to-br from-[color:var(--rose)]/20 to-transparent rounded-full blur-xl" />
-            <div className="hidden sm:block absolute -bottom-6 -left-6 w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-tr from-slate-200/30 to-transparent rounded-full blur-2xl" />
+            {/* Desktop: Styled video with container */}
+            <div className="hidden lg:block relative w-full max-w-2xl ml-auto animate-fade-in-up lg:animate-slide-in-right">
+              <div className="relative overflow-hidden rounded-2xl lg:rounded-3xl border border-slate-200/50 shadow-xl lg:shadow-2xl bg-white/10 backdrop-blur-sm aspect-video group video-container">
+                <video
+                  ref={videoRef}
+                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  src="/WelcomeVideo.mp4"
+                  autoPlay
+                  loop
+                  playsInline
+                  muted={muted}
+                />
+
+                {/* Gradient overlays */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
+
+                {/* Controls - Desktop */}
+                <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex gap-2 sm:gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <button
+                    onClick={toggleMute}
+                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/25 backdrop-blur-md 
+                             border border-white/40 text-white shadow-lg hover:bg-white/35 
+                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
+                             hover:scale-110 active:scale-95"
+                    aria-label={muted ? "Unmute video" : "Mute video"}
+                  >
+                    {muted ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                      </svg>
+                    )}
+                  </button>
+                  <button
+                    onClick={togglePause}
+                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/25 backdrop-blur-md 
+                             border border-white/40 text-white shadow-lg hover:bg-white/35 
+                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
+                             hover:scale-110 active:scale-95"
+                    aria-label={paused ? "Play video" : "Pause video"}
+                  >
+                    {paused ? (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m2 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

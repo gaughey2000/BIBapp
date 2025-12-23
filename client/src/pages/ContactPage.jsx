@@ -1,22 +1,35 @@
 import { useState } from "react";
+import { submitContactForm } from "../api.js";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitted(true);
-    setName("");
-    setEmail("");
-    setMessage("");
+    setLoading(true);
+    setError("");
+    
+    try {
+      await submitContactForm(name, email, message);
+      setSubmitted(true);
+      setName("");
+      setEmail("");
+      setMessage("");
+    } catch (err) {
+      setError(err.message || "Failed to send message. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-[color:var(--cream)] py-8 sm:py-12 md:py-16">
-      <div className="container-narrow grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
+    <div className="min-h-screen bg-gradient-to-b from-white to-[color:var(--cream)] py-6 sm:py-8 md:py-12">
+      <div className="container-narrow grid md:grid-cols-2 gap-6 sm:gap-8 items-start">
         {/* Left: clinic info */}
         <div className="animate-fade-in-up">
           <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">Contact us</h1>
@@ -24,7 +37,7 @@ export default function ContactPage() {
             Have a question or want to book? We'd love to hear from you.
           </p>
 
-          <div className="mt-6 sm:mt-8 space-y-4 sm:space-y-6">
+          <div className="mt-5 sm:mt-6 space-y-3 sm:space-y-4">
             <div className="card-flat p-4 sm:p-5">
               <div className="flex items-start gap-3 sm:gap-4">
                 <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[color:var(--rose)]/10 flex items-center justify-center">
@@ -108,50 +121,76 @@ export default function ContactPage() {
               </div>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Your name</label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="John Smith"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  className="input"
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">Your email</label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="john@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="input"
-                />
-              </div>
-              <div>
-                <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1.5">Your message</label>
-                <textarea
-                  id="message"
-                  placeholder="Tell us how we can help..."
-                  rows="5"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  required
-                  className="textarea"
-                />
-              </div>
-              <button type="submit" className="btn btn-primary w-full">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-                Send message
-              </button>
-            </form>
+            <>
+              {error && (
+                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <div className="flex items-start gap-3">
+                    <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-sm sm:text-base text-red-700">{error}</p>
+                  </div>
+                </div>
+              )}
+              <form onSubmit={handleSubmit} className="mt-4 space-y-4">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Your name</label>
+                  <input
+                    id="name"
+                    type="text"
+                    placeholder="John Smith"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="input"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">Your email</label>
+                  <input
+                    id="email"
+                    type="email"
+                    placeholder="john@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="input"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1.5">Your message</label>
+                  <textarea
+                    id="message"
+                    placeholder="Tell us how we can help..."
+                    rows="5"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    required
+                    disabled={loading}
+                    className="textarea"
+                  />
+                </div>
+                <button type="submit" disabled={loading} className="btn btn-primary w-full">
+                  {loading ? (
+                    <>
+                      <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                      </svg>
+                      Send message
+                    </>
+                  )}
+                </button>
+              </form>
+            </>
           )}
         </div>
       </div>

@@ -3,6 +3,7 @@ import ErrorBoundary from "./components/ui/ErrorBoundary";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CookieConsent from "./components/CookieConsent";
+import { ThemeProvider } from "./contexts/ThemeContext";
 
 // Public pages
 import HomePage from "./pages/HomePage";
@@ -26,36 +27,38 @@ function NotFound() {
 
 export default function App() {
   return (
-    <ErrorBoundary>
-      <Navbar /> 
-      <Routes>
-        {/* Public */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/services" element={<ServicesPage />} />
-        <Route path="/services/:id" element={<ServiceDetailPage />} />
-        <Route path="/book" element={<ExternalBooking />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/about" element={<AboutPage />} />
+    <ThemeProvider>
+      <ErrorBoundary>
+        <Navbar /> 
+        <Routes>
+          {/* Public */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/services/:id" element={<ServiceDetailPage />} />
+          <Route path="/book" element={<ExternalBooking />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          
+          {/* Legal Pages */}
+          <Route path="/privacy" element={<PrivacyPolicyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/cookie-policy" element={<CookiePolicyPage />} />
+
+          {/* Auth */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
+          {/* Protected admin */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+          </Route>
+
+          {/* 404 */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
         
-        {/* Legal Pages */}
-        <Route path="/privacy" element={<PrivacyPolicyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/cookie-policy" element={<CookiePolicyPage />} />
-
-        {/* Auth */}
-        <Route path="/admin/login" element={<AdminLogin />} />
-
-        {/* Protected admin */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/admin" element={<AdminDashboard />} />
-        </Route>
-
-        {/* 404 */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      
-      {/* Cookie Consent Banner */}
-      <CookieConsent />
-    </ErrorBoundary>
+        {/* Cookie Consent Banner */}
+        <CookieConsent />
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }

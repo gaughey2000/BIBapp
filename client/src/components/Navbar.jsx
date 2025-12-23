@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
+import ThemeToggle from "./ThemeToggle";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -59,25 +60,28 @@ export default function Navbar() {
               Contact
             </NavLink>
             <div className="ml-4 h-6 w-px bg-slate-200"></div>
-            <Link
-              to="/book"
-              className="btn btn-primary ml-2 shadow-md hover:shadow-lg"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
+            <div className="flex items-center gap-3 ml-2">
+              <ThemeToggle />
+              <Link
+                to="/book"
+                className="btn btn-primary shadow-md hover:shadow-lg"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                />
-              </svg>
-              Book now
-            </Link>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                Book now
+              </Link>
+            </div>
           </nav>
 
           {/* Mobile toggle */}
@@ -202,7 +206,10 @@ export default function Navbar() {
                 Contact
               </div>
             </NavLink>
-            <div className="pt-4 border-t border-slate-200 mt-4">
+            <div className="pt-4 border-t border-slate-200 mt-4 space-y-3">
+              <div className="flex items-center justify-center">
+                <ThemeToggle />
+              </div>
               <Link
                 to="/book"
                 onClick={() => setOpen(false)}

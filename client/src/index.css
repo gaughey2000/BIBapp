@@ -16,8 +16,8 @@ html, body, #root {
 }
 
 body {
-  background: var(--cream);
-  color: var(--ink);
+  background: #faf7f2;
+  color: #1f2937;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -139,7 +139,7 @@ body {
 }
 
 .section-padding {
-  @apply py-8 sm:py-12 md:py-16 lg:py-20;
+  @apply py-6 sm:py-8 md:py-12 lg:py-16;
 }
 
 /* Mobile-optimized touch targets */
@@ -223,4 +223,102 @@ body {
   opacity: 0;
   transform: translateY(-10px) scale(0.95);
   transition: all 0.2s cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ===== DARK MODE THEME SYSTEM ===== */
+
+/* Dark mode background and base text */
+html.dark {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+}
+
+html.dark body {
+  background: transparent;
+  color: #e2e8f0;
+}
+
+/* Dark mode component overrides */
+html.dark .card,
+html.dark .card-flat,
+html.dark .card-elevated {
+  background: rgba(30, 41, 59, 0.8);
+  border-color: #475569;
+  color: #f1f5f9;
+  backdrop-filter: blur(12px);
+}
+
+html.dark .btn-secondary {
+  background: #475569;
+  border-color: #64748b;
+  color: #f1f5f9;
+}
+
+html.dark .btn-ghost {
+  color: #cbd5e1;
+  border-color: #64748b;
+}
+
+html.dark .input,
+html.dark .textarea,
+html.dark .select {
+  background: rgba(51, 65, 85, 0.8);
+  border-color: #64748b;
+  color: #f1f5f9;
+}
+
+html.dark .input::placeholder,
+html.dark .textarea::placeholder {
+  color: #94a3b8;
+}
+
+html.dark .nav-frosted {
+  background: rgba(15, 23, 42, 0.9);
+  border-bottom-color: #475569;
+}
+
+/* Dark mode text colors */
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4,
+html.dark h5,
+html.dark h6 {
+  color: #f8fafc;
+}
+
+html.dark p,
+html.dark span,
+html.dark div {
+  color: #cbd5e1;
+}
+
+/* Override page-specific backgrounds in dark mode - AGGRESSIVE */
+html.dark main,
+html.dark section,
+html.dark div[class*="bg-gradient"],
+html.dark div[class*="min-h-screen"] {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+}
+
+/* Extra specific overrides for stubborn backgrounds */
+html.dark .min-h-screen {
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+}
+
+html.dark [class*="bg-white"]:not(.video-container),
+html.dark [class*="bg-slate-50"],
+html.dark [class*="bg-cream"] {
+  background: rgba(30, 41, 59, 0.82) !important;
+}
+
+/* Video container dark mode styling */
+html.dark .video-container {
+  background: transparent !important;
+  border-color: #64748b !important;
+}
+
+/* Keep rose brand colors intact in dark mode */
+html.dark [class*="text-rose"],
+html.dark [style*="color:var(--rose)"] {
+  color: #e11d48 !important; /* Slightly brighter rose for dark mode */
 }

@@ -275,6 +275,48 @@ app.delete("/api/admin/services/:id", requireAdmin, async (req, res) => {
 });
 
 // ============================================================
+// CONTACT FORM
+// ============================================================
+
+const contactSchema = z.object({
+  name: z.string().min(1, "Name is required").max(100),
+  email: z.string().email("Invalid email address"),
+  message: z.string().min(1, "Message is required").max(1000),
+});
+
+app.post("/api/contact", async (req, res) => {
+  try {
+    const { name, email, message } = contactSchema.parse(req.body);
+    
+    // For MVP, just log the contact form submission
+    // In production, you would send email via SendGrid, Mailgun, etc.
+    console.log("📧 Contact form submission:", {
+      name,
+      email,
+      message,
+      timestamp: new Date().toISOString()
+    });
+    
+    // You could also save to database if needed
+    // await prisma.contact.create({ data: { name, email, message } });
+    
+    return res.json({ 
+      success: true, 
+      message: "Thank you for your message. We'll get back to you soon!" 
+    });
+  } catch (err) {
+    if (err instanceof z.ZodError) {
+      return res.status(400).json({ 
+        error: "Please check your input", 
+        details: err.errors 
+      });
+    }
+    console.error("POST /api/contact:", err);
+    return res.status(500).json({ error: "Failed to send message" });
+  }
+});
+
+// ============================================================
 // FALLBACK
 // ============================================================
 app.use((req, res) => {

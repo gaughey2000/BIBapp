@@ -8,11 +8,11 @@ function toGBP(cents) {
 }
 
 const LABELS = {
-  BOTULINUM_TOXIN: "Botulinum Toxin",
+  BOTULINUM_TOXIN: "Anti-Wrinkle Injections",
   CHEMICAL_PEELS: "Chemical Peels",
-  DERMAL_FILLER: "Dermal Filler",
-  SKIN_CARE: "Skin Care",
-  OTHER_SERVICES: "Other Services",
+  DERMAL_FILLER: "Dermal Fillers",
+  SKIN_CARE: "Skin Boosters",
+  OTHER_SERVICES: "Additional Treatments",
 };
 
 const GROUP_ORDER = [
@@ -27,23 +27,23 @@ const GROUP_ORDER = [
 const CATEGORY_META = {
   BOTULINUM_TOXIN: {
     img: "/NurseInjectingClient.jpg",
-    blurb: "Target lines with precise botulinum toxin treatments for a smoother, refreshed look.",
+    blurb: "Prescription-only treatments to relax targeted facial muscles and soften fine lines caused by muscle movement.",
   },
   CHEMICAL_PEELS: {
-    img: "/ClientWaitingFillingForm.jpg",
-    blurb: "Refine texture and brighten tone with tailored peels for clearer, radiant skin.",
+    img: "/ClientWaitingFillingForm.jpg", 
+    blurb: "Medical-grade peels that exfoliate and renew the skin, improving acne, pigmentation, and uneven skin tone.",
   },
   DERMAL_FILLER: {
     img: "/ClientSmillingAtResults.jpg",
-    blurb: "Restore volume and enhance contours using premium dermal fillers.",
+    blurb: "Hyaluronic acid fillers to restore volume, lift, and contour while maintaining a natural appearance.",
   },
   SKIN_CARE: {
     img: "/NurseInjectingClient2.jpg",
-    blurb: "From microneedling to boosters—advanced care to strengthen and rejuvenate skin.",
+    blurb: "Advanced skin boosters including Profhilo® and polynucleotides to improve skin quality and hydration.",
   },
   OTHER_SERVICES: {
     img: "/ClientWaitingFillingForm.jpg",
-    blurb: "Consultations, reviews, vitamin injections and more to support your journey.",
+    blurb: "Microneedling, acne treatments, and vitamin B12 injections to support your wellness journey.",
   },
 };
 
@@ -157,9 +157,10 @@ export default function ServicesPage() {
             Our <span className="text-transparent bg-clip-text bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--rose-dark)]">Treatments</span>
           </h1>
           
-          <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed px-4">
-            Explore our curated range of treatments, designed to blend expertise, science,
-            and care for naturally elegant results that enhance your natural beauty.
+          <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed px-4">
+            <strong>BiB Aesthetics Clinic</strong> specialises in individualised, tailored aesthetic treatments designed to deliver natural-looking results. 
+            All treatments are carried out by an experienced, registered nurse and independent prescriber using high-end, medical-grade products 
+            and evidence-based techniques to enhance confidence, appearance, and overall wellbeing.
           </p>
         </section>
 

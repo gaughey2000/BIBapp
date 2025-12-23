@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchService } from "../api";
+import TreatmentDetailSection from "../components/TreatmentDetailSection";
 
 function toGBP(cents) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" })
@@ -73,6 +74,12 @@ export default function ServiceDetailPage() {
                 </div>
               </div>
             )}
+
+            {/* Authoritative Treatment Content */}
+            <TreatmentDetailSection 
+              serviceName={service.name} 
+              serviceSlug={service.slug || id} 
+            />
 
             <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3">
               <Link to={`/book?serviceId=${service.service_id}`} className="btn btn-primary flex-1 sm:flex-none">

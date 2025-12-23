@@ -25,7 +25,7 @@ export default function AboutPage() {
             <h2 className="text-xl sm:text-2xl font-semibold text-[color:var(--rose)] mb-2 sm:mb-3">
               Rachel
             </h2>
-            <p className="leading-relaxed text-sm sm:text-base">
+            <p className="leading-relaxed text-sm sm:text-base text-slate-700">
             Rachel is the practicioner here at BIB Clinic. With more
             than 15 years of experience in asethtics and 20+ years as a
             a registered nurse, you can be confident in your treatment.
@@ -47,7 +47,7 @@ export default function AboutPage() {
             <h2 className="text-xl sm:text-2xl font-semibold text-[color:var(--rose)] mb-2 sm:mb-3">
               Diane
             </h2>
-            <p className="leading-relaxed text-sm sm:text-base">
+            <p className="leading-relaxed text-sm sm:text-base text-slate-700">
               From booking your next appointment to
               welcoming you when first enter BIB Clinic Diane
               is here to make everything around your treatment fantastic. 

@@ -108,6 +108,11 @@ export async function deleteService(id) {
   return apiCall(`${BASE}/api/admin/services/${id}`, withOpts("DELETE"));
 }
 
+// ========== CONTACT FORM ==========
+export async function submitContactForm(name, email, message) {
+  return apiCall(`${BASE}/api/contact`, withOpts("POST", { name, email, message }));
+}
+
 // Default export for backward compatibility
 export default {
   fetchServices,
@@ -119,4 +124,5 @@ export default {
   createService,
   updateService,
   deleteService,
+  submitContactForm,
 };
