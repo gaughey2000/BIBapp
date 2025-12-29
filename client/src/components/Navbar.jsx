@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import ThemeToggle from "./ThemeToggle";
+import { BOOKING_URL } from "../constants/links";
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
@@ -62,8 +63,10 @@ export default function Navbar() {
             <div className="ml-4 h-6 w-px bg-slate-200"></div>
             <div className="flex items-center gap-3 ml-2">
               <ThemeToggle />
-              <Link
-                to="/book"
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noreferrer"
                 className="btn btn-primary shadow-md hover:shadow-lg"
               >
                 <svg
@@ -80,7 +83,7 @@ export default function Navbar() {
                   />
                 </svg>
                 Book now
-              </Link>
+              </a>
             </div>
           </nav>
 
@@ -110,12 +113,12 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden nav-frosted border-t border-[color:var(--rose)]/20 mobile-menu animate-slide-down">
           <nav className="container-narrow py-4 space-y-2">
-            <NavLink
-              to="/book"
+            <a
+              href={BOOKING_URL}
+              target="_blank"
+              rel="noreferrer"
               onClick={() => setOpen(false)}
-              className={({ isActive }) =>
-                `block ${linkBase} ${isActive ? active : inactive}`
-              }
+              className={`block ${linkBase} ${inactive}`}
             >
               <div className="flex items-center gap-3">
                 <svg
@@ -133,7 +136,7 @@ export default function Navbar() {
                 </svg>
                 Book
               </div>
-            </NavLink>
+            </a>
             <NavLink
               to="/services"
               onClick={() => setOpen(false)}
@@ -210,8 +213,10 @@ export default function Navbar() {
               <div className="flex items-center justify-center">
                 <ThemeToggle />
               </div>
-              <Link
-                to="/book"
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noreferrer"
                 onClick={() => setOpen(false)}
                 className="btn btn-primary w-full justify-center"
               >
@@ -229,7 +234,7 @@ export default function Navbar() {
                   />
                 </svg>
                 Book now
-              </Link>
+              </a>
             </div>
           </nav>
         </div>

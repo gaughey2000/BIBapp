@@ -22,6 +22,123 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Dark mode overrides */
+.dark body {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .card {
+  @apply border-slate-700 bg-slate-900/70;
+}
+
+.dark .card-flat {
+  @apply border-slate-800 bg-slate-900/50;
+}
+
+.dark .card-elevated {
+  @apply bg-slate-900/90 shadow-lg;
+}
+
+.dark .nav-frosted {
+  @apply bg-slate-900/80 border-slate-700;
+}
+
+.dark .table {
+  @apply bg-slate-900/70;
+}
+
+.dark .table th {
+  @apply bg-slate-800/60 text-slate-300 border-slate-700;
+}
+
+.dark .table td {
+  @apply text-slate-200 border-slate-800;
+}
+
+.dark .table tr:hover {
+  @apply bg-slate-800/40;
+}
+
+.dark .btn-secondary {
+  @apply text-slate-100 bg-slate-900 border-slate-700 hover:bg-slate-800 hover:border-slate-600;
+}
+
+.dark .btn-ghost {
+  @apply text-slate-200 border-slate-700 hover:bg-slate-800/60 hover:border-slate-600;
+}
+
+.dark .input,
+.dark .textarea,
+.dark .select {
+  @apply border-slate-700 bg-slate-900/60 text-slate-100 focus:bg-slate-900;
+}
+
+.dark .input::placeholder,
+.dark .textarea::placeholder {
+  color: #94a3b8;
+}
+
+.dark .bg-white {
+  background-color: #0f172a;
+}
+
+.dark .bg-white\/95 {
+  background-color: rgba(15, 23, 42, 0.95);
+}
+
+.dark .bg-white\/80 {
+  background-color: rgba(15, 23, 42, 0.8);
+}
+
+.dark .bg-white\/60 {
+  background-color: rgba(15, 23, 42, 0.6);
+}
+
+.dark .bg-slate-50 {
+  background-color: #0b1220;
+}
+
+.dark .bg-slate-50\/50 {
+  background-color: rgba(15, 23, 42, 0.5);
+}
+
+.dark .text-slate-900 {
+  color: #f1f5f9;
+}
+
+.dark .text-slate-800 {
+  color: #e2e8f0;
+}
+
+.dark .text-slate-700 {
+  color: #cbd5e1;
+}
+
+.dark .text-slate-600 {
+  color: #94a3b8;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8;
+}
+
+.dark .text-slate-400 {
+  color: #94a3b8;
+}
+
+.dark .border-slate-200 {
+  border-color: #334155;
+}
+
+.dark .border-slate-100 {
+  border-color: #1f2a3b;
+}
+
+.dark .border-slate-50 {
+  border-color: #111827;
+}
+
 /* Custom component styles using Tailwind classes */
 .container-narrow { 
   @apply max-w-6xl mx-auto px-4 sm:px-6 lg:px-8; 

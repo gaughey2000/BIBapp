@@ -33,7 +33,6 @@ export default function CookiePolicyPage() {
               We use cookies to:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>Keep you signed in to your account (authentication)</li>
               <li>Remember your preferences and settings</li>
               <li>Understand how you use our website</li>
               <li>Improve our website performance and user experience</li>
@@ -61,15 +60,10 @@ export default function CookiePolicyPage() {
                       </tr>
                     </thead>
                     <tbody className="text-gray-600">
-                      <tr className="border-b">
-                        <td className="py-2 font-mono">auth_token</td>
-                        <td className="py-2">Keeps you logged into admin dashboard</td>
-                        <td className="py-2">30 days</td>
-                      </tr>
                       <tr>
-                        <td className="py-2 font-mono">session_id</td>
-                        <td className="py-2">Maintains your session state</td>
-                        <td className="py-2">Session</td>
+                        <td className="py-2 font-mono">cookie_consent</td>
+                        <td className="py-2">Stores your cookie preferences</td>
+                        <td className="py-2">1 year</td>
                       </tr>
                     </tbody>
                   </table>
@@ -92,11 +86,6 @@ export default function CookiePolicyPage() {
                       </tr>
                     </thead>
                     <tbody className="text-gray-600">
-                      <tr className="border-b">
-                        <td className="py-2 font-mono">cookie_consent</td>
-                        <td className="py-2">Remembers your cookie preferences</td>
-                        <td className="py-2">1 year</td>
-                      </tr>
                       <tr>
                         <td className="py-2 font-mono">language_pref</td>
                         <td className="py-2">Stores your language preference</td>

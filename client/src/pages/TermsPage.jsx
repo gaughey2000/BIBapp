@@ -161,16 +161,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">9. User Accounts and Security</h2>
-            <ul className="list-disc pl-6 text-gray-700 space-y-2">
-              <li>You are responsible for maintaining the confidentiality of your booking information</li>
-              <li>Notify us immediately if you suspect unauthorized use of your information</li>
-              <li>We are not liable for losses due to unauthorized account access</li>
-            </ul>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Intellectual Property</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Intellectual Property</h2>
             <p className="text-gray-700 leading-relaxed">
               All content on this website, including text, graphics, logos, images, and software, is the property of BIB Beauty and protected by UK and international copyright laws.
             </p>
@@ -185,7 +176,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Website Use</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Website Use</h2>
             <p className="text-gray-700 leading-relaxed">You agree not to:</p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
               <li>Use the website for any unlawful purpose</li>
@@ -197,14 +188,14 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">12. Third-Party Links</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Third-Party Links</h2>
             <p className="text-gray-700 leading-relaxed">
               Our website may contain links to third-party websites. We are not responsible for the content or practices of these websites. We encourage you to review their terms and privacy policies.
             </p>
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">13. Complaints and Disputes</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">12. Complaints and Disputes</h2>
             <p className="text-gray-700 leading-relaxed">
               If you have a complaint about our services:
             </p>
@@ -216,7 +207,7 @@ export default function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">14. Governing Law</h2>
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">13. Governing Law</h2>
             <p className="text-gray-700 leading-relaxed">
               These Terms are governed by the laws of England and Wales. Any disputes will be subject to the exclusive jurisdiction of the courts of England and Wales.
             </p>

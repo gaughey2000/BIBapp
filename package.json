@@ -2,14 +2,12 @@
     "name": "bib-root",
     "private": true,
     "scripts": {
-        "dev": "concurrently \"npm -C server run dev\" \"npm -C client run dev\"",
-        "test": "npm -C server test && npm -C client test",
+        "dev": "npm -C client run dev",
+        "test": "npm -C client test",
         "build": "npm -C client run build",
-        "lint": "npm -C server run lint & npm -C client run lint",
+        "lint": "npm -C client run lint",
         "check": "npm audit && npm outdated",
-        "install-all": "npm install && npm -C server install && npm -C client install"
+        "install-all": "npm install && npm -C client install"
     },
-    "devDependencies": {
-        "concurrently": "^9.2.1"
-    }
+    "devDependencies": {}
 }

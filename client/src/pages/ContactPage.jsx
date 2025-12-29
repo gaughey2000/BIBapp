@@ -1,32 +1,4 @@
-import { useState } from "react";
-import { submitContactForm } from "../api.js";
-
 export default function ContactPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
-    
-    try {
-      await submitContactForm(name, email, message);
-      setSubmitted(true);
-      setName("");
-      setEmail("");
-      setMessage("");
-    } catch (err) {
-      setError(err.message || "Failed to send message. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[color:var(--cream)] py-6 sm:py-8 md:py-12">
       <div className="container-narrow grid md:grid-cols-2 gap-6 sm:gap-8 items-start">
@@ -49,8 +21,10 @@ export default function ContactPage() {
                 <div className="flex-1 min-w-0">
                   <strong className="block font-medium text-slate-900 text-sm sm:text-base">Address</strong>
                   <p className="text-sm sm:text-base text-slate-600 mt-1">
-                    123 High Street<br />
-                    Bolton, UK
+                    BIB Aesthetics<br />
+                    9 Maryland Avenue<br />
+                    Bolton<br />
+                    BL2 6DL
                   </p>
                 </div>
               </div>
@@ -81,117 +55,31 @@ export default function ContactPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <strong className="block font-medium text-slate-900 text-sm sm:text-base">Phone</strong>
-                  <a href="tel:+441234567890" className="text-sm sm:text-base text-[color:var(--rose)] hover:underline mt-1 block">
-                    +44 1234 567 890
+                  <a href="tel:07880658042" className="text-sm sm:text-base text-[color:var(--rose)] hover:underline mt-1 block">
+                    07880658042
                   </a>
                 </div>
               </div>
             </div>
 
-            <div className="card-flat p-4 sm:p-5">
-              <div className="flex items-start gap-3 sm:gap-4">
-                <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-[color:var(--rose)]/10 flex items-center justify-center">
-                  <svg className="w-5 h-5 sm:w-6 sm:h-6 text-[color:var(--rose)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <strong className="block font-medium text-slate-900 text-sm sm:text-base">Hours</strong>
-                  <p className="text-sm sm:text-base text-slate-600 mt-1">
-                    Mon–Sat: 9am – 6pm<br />
-                    Sun: Closed
-                  </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
-        {/* Right: contact form */}
+        {/* Right: email link */}
         <div className="card p-4 sm:p-6 shadow-sm animate-fade-in-up">
-          <h2 className="text-lg sm:text-xl font-semibold text-slate-900">Send us a message</h2>
-
-          {submitted ? (
-            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-lg">
-              <div className="flex items-start gap-3">
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <p className="text-sm sm:text-base text-green-700">Thank you — we'll be in touch soon.</p>
-              </div>
-            </div>
-          ) : (
-            <>
-              {error && (
-                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <div className="flex items-start gap-3">
-                    <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                    </svg>
-                    <p className="text-sm sm:text-base text-red-700">{error}</p>
-                  </div>
-                </div>
-              )}
-              <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-                <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-1.5">Your name</label>
-                  <input
-                    id="name"
-                    type="text"
-                    placeholder="John Smith"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    required
-                    disabled={loading}
-                    className="input"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-1.5">Your email</label>
-                  <input
-                    id="email"
-                    type="email"
-                    placeholder="john@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={loading}
-                    className="input"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-1.5">Your message</label>
-                  <textarea
-                    id="message"
-                    placeholder="Tell us how we can help..."
-                    rows="5"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    required
-                    disabled={loading}
-                    className="textarea"
-                  />
-                </div>
-                <button type="submit" disabled={loading} className="btn btn-primary w-full">
-                  {loading ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                      </svg>
-                      Send message
-                    </>
-                  )}
-                </button>
-              </form>
-            </>
-          )}
+          <h2 className="text-lg sm:text-xl font-semibold text-slate-900">Email us</h2>
+          <p className="mt-2 text-sm sm:text-base text-slate-600">
+            Click below to open a new email draft. We normally reply within 24 hours.
+          </p>
+          <a
+            href="mailto:info@bibclinic.co.uk"
+            className="btn btn-primary w-full mt-5 inline-flex items-center justify-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            Email info@bibclinic.co.uk
+          </a>
         </div>
       </div>
     </div>

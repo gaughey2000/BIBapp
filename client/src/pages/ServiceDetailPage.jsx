@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { fetchService } from "../api";
 import TreatmentDetailSection from "../components/TreatmentDetailSection";
+import { BOOKING_URL } from "../constants/links";
+import { SERVICES } from "../data/services";
 
 function toGBP(cents) {
   return new Intl.NumberFormat("en-GB", { style: "currency", currency: "GBP" })
@@ -10,18 +10,9 @@ function toGBP(cents) {
 
 export default function ServiceDetailPage() {
   const { id } = useParams();
-  const [service, setService] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState("");
-
-  useEffect(() => {
-    let ok = true;
-    fetchService(id)
-      .then((s) => ok && setService(s))
-      .catch(() => ok && setError("Service not found"))
-      .finally(() => ok && setLoading(false));
-    return () => { ok = false; };
-  }, [id]);
+  const service = SERVICES.find((item) => String(item.service_id) === String(id));
+  const error = service ? "" : "Service not found";
+  const loading = false;
 
   return (
     <main className="min-h-screen bg-white">
@@ -34,22 +25,14 @@ export default function ServiceDetailPage() {
             Back to services
           </Link>
           <h1 className="mt-3 sm:mt-4 text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-slate-900">
-            {loading ? "Loading…" : (service?.name ?? "Service")}
+            {service?.name ?? "Service"}
           </h1>
           {error && <p className="mt-2 text-xs sm:text-sm text-red-600">{error}</p>}
         </div>
       </section>
 
       <section className="container-narrow py-6 sm:py-10">
-        {loading && (
-          <div className="card p-4 sm:p-6 animate-pulse">
-            <div className="h-5 sm:h-6 w-1/2 rounded bg-slate-200"/>
-            <div className="mt-3 h-4 w-1/3 rounded bg-slate-100"/>
-            <div className="mt-6 h-20 sm:h-24 w-full rounded bg-slate-100"/>
-          </div>
-        )}
-
-        {!loading && service && (
+        {service && (
           <article className="card p-4 sm:p-6 animate-fade-in-up">
             <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 sm:gap-6">
               <div className="flex-1">
@@ -82,12 +65,17 @@ export default function ServiceDetailPage() {
             />
 
             <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row gap-3">
-              <Link to={`/book?serviceId=${service.service_id}`} className="btn btn-primary flex-1 sm:flex-none">
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-primary flex-1 sm:flex-none"
+              >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
                 Book this service
-              </Link>
+              </a>
               <Link to="/services" className="btn btn-secondary flex-1 sm:flex-none">
                 View all treatments
               </Link>

@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ErrorBoundary from "./components/ui/ErrorBoundary";
 import Navbar from "./components/Navbar";
-import ProtectedRoute from "./components/ProtectedRoute";
+import Footer from "./components/Footer";
 import CookieConsent from "./components/CookieConsent";
 import { ThemeProvider } from "./contexts/ThemeContext";
 
@@ -17,8 +17,6 @@ import TermsPage from "./pages/TermsPage";
 import CookiePolicyPage from "./pages/CookiePolicyPage";
 
 // Admin pages
-import AdminLogin from "./pages/AdminLogin";
-import AdminDashboard from "./pages/AdminDashboard";
 
 // Fallback
 function NotFound() {
@@ -44,17 +42,11 @@ export default function App() {
           <Route path="/terms" element={<TermsPage />} />
           <Route path="/cookie-policy" element={<CookiePolicyPage />} />
 
-          {/* Auth */}
-          <Route path="/admin/login" element={<AdminLogin />} />
-
-          {/* Protected admin */}
-          <Route element={<ProtectedRoute />}>
-            <Route path="/admin" element={<AdminDashboard />} />
-          </Route>
-
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+
+        <Footer />
         
         {/* Cookie Consent Banner */}
         <CookieConsent />

@@ -1,6 +1,7 @@
 // client/src/pages/HomePage.jsx
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { BOOKING_URL } from "../constants/links";
 import ReviewsCarousel from "../components/ReviewsCarousel";
 
 export default function HomePage() {
@@ -79,7 +80,12 @@ export default function HomePage() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-5 sm:mb-6">
-              <Link to="/book" className="btn btn-primary btn-lg group w-full sm:w-auto">
+              <a
+                href={BOOKING_URL}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-primary btn-lg group w-full sm:w-auto"
+              >
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-12 transition-transform duration-200"
                   fill="none"
@@ -94,7 +100,7 @@ export default function HomePage() {
                   />
                 </svg>
                 Book appointment
-              </Link>
+              </a>
               <Link to="/services" className="btn btn-secondary btn-lg group w-full sm:w-auto">
                 <svg
                   className="w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform duration-200"

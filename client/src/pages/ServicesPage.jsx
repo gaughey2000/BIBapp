@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router-dom";
-import { fetchServices } from "../api";
+import { BOOKING_URL } from "../constants/links";
+import { SERVICES } from "../data/services";
 
 function toGBP(cents) {
   const n = Number(cents) || 0;
@@ -47,24 +48,70 @@ const CATEGORY_META = {
   },
 };
 
-// --- Enhanced ServiceCard with better Tailwind styling ---
-function ServiceCard({ s }) {
+function splitServiceName(name) {
+  const [base, option] = name.split(": ");
+  if (option) {
+    return { base: base.trim(), option: option.trim() };
+  }
+  return { base: name.trim(), option: "Standard" };
+}
+
+function groupServiceOptions(items) {
+  const map = new Map();
+  for (const s of items) {
+    const { base, option } = splitServiceName(s.name);
+    if (!map.has(base)) {
+      map.set(base, { baseName: base, options: [] });
+    }
+    map.get(base).options.push({ ...s, optionLabel: option });
+  }
+  return Array.from(map.values());
+}
+
+// --- TreatmentCard with option selector ---
+function TreatmentCard({ treatment }) {
+  const { baseName, options } = treatment;
+  const [selectedId, setSelectedId] = useState(
+    options[0]?.service_id ? String(options[0].service_id) : ""
+  );
+  const selected =
+    options.find((o) => String(o.service_id) === selectedId) ?? options[0];
+  const fallbackDescription = options.find((o) => o.description)?.description || "";
+  const description = selected?.description || fallbackDescription;
+
   return (
     <div className="card group hover:shadow-xl transition-all duration-300 hover:scale-[1.02] animate-fade-in-up">
       <div className="p-4 sm:p-6 h-full flex flex-col">
         <div className="flex-1 space-y-3 sm:space-y-4">
           <div className="flex items-start justify-between gap-3">
             <h3 className="text-lg sm:text-xl font-semibold text-slate-900 group-hover:text-[color:var(--rose)] transition-colors duration-200 leading-tight">
-              {s.name}
+              {baseName}
             </h3>
             <div className="text-right flex-shrink-0">
-              <div className="text-xl sm:text-2xl font-bold text-slate-900">{toGBP(s.price_cents)}</div>
-              <div className="text-xs text-slate-500 uppercase tracking-wide">from</div>
+              <div className="text-xl sm:text-2xl font-bold text-slate-900">{toGBP(selected?.price_cents)}</div>
+              <div className="text-xs text-slate-500 uppercase tracking-wide">
+                {options.length > 1 ? "selected" : "price"}
+              </div>
             </div>
           </div>
+
+          <div className="space-y-1">
+            <label className="text-xs sm:text-sm font-medium text-slate-700">Choose option</label>
+            <select
+              className="select"
+              value={selectedId}
+              onChange={(e) => setSelectedId(e.target.value)}
+            >
+              {options.map((o) => (
+                <option key={o.service_id} value={String(o.service_id)}>
+                  {o.optionLabel} — {toGBP(o.price_cents)}
+                </option>
+              ))}
+            </select>
+          </div>
           
-          {s.description && (
-            <p className="text-sm sm:text-base text-slate-600 leading-relaxed line-clamp-3">{s.description}</p>
+          {description && (
+            <p className="text-sm sm:text-base text-slate-600 leading-relaxed line-clamp-3">{description}</p>
           )}
           
           <div className="flex flex-wrap items-center gap-3 sm:gap-4 text-xs sm:text-sm text-slate-500">
@@ -72,22 +119,22 @@ function ServiceCard({ s }) {
               <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-              <span>{s.duration_min} mins</span>
+              <span>{selected?.duration_min} mins</span>
             </div>
-            {s.buffer_min && (
+            {selected?.buffer_min ? (
               <div className="flex items-center gap-1">
                 <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                 </svg>
-                <span>+{s.buffer_min} buffer</span>
+                <span>+{selected.buffer_min} buffer</span>
               </div>
-            )}
+            ) : null}
           </div>
         </div>
 
         <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3">
           <Link 
-            to={`/services/${s.service_id}`} 
+            to={`/services/${selected?.service_id}`} 
             className="btn btn-secondary flex-1 group/btn text-sm"
           >
             <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -95,15 +142,17 @@ function ServiceCard({ s }) {
             </svg>
             Details
           </Link>
-          <Link 
-            to={`/book?serviceId=${s.service_id}`} 
+          <a
+            href={BOOKING_URL}
+            target="_blank"
+            rel="noreferrer"
             className="btn btn-primary flex-1 group/btn text-sm"
           >
             <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover/btn:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             Book now
-          </Link>
+          </a>
         </div>
       </div>
     </div>
@@ -111,26 +160,7 @@ function ServiceCard({ s }) {
 }
 
 export default function ServicesPage() {
-  const [services, setServices] = useState([]);
-  const [err, setErr] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const list = await fetchServices();
-        if (!alive) return;
-        setServices(Array.isArray(list) ? list : []);
-      } catch (e) {
-        if (!alive) return;
-        setErr(e?.message || "Failed to load services");
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
-    return () => { alive = false; };
-  }, []);
+  const services = SERVICES;
 
   const grouped = useMemo(() => {
     const map = Object.fromEntries(GROUP_ORDER.map(k => [k, []]));
@@ -138,7 +168,12 @@ export default function ServicesPage() {
       const key = s.treatment_type ?? "OTHER_SERVICES";
       if (map[key]) map[key].push(s);
     }
-    return GROUP_ORDER.map(key => ({ key, label: LABELS[key], meta: CATEGORY_META[key], items: map[key] }));
+    return GROUP_ORDER.map(key => ({
+      key,
+      label: LABELS[key],
+      meta: CATEGORY_META[key],
+      items: groupServiceOptions(map[key]),
+    }));
   }, [services]);
 
   return (
@@ -166,49 +201,8 @@ export default function ServicesPage() {
 
         {/* Services */}
         <section>
-          {err && (
-            <div className="card p-6 mb-8 bg-red-50 border-red-200 animate-fade-in-up">
-              <div className="flex items-center gap-3 text-red-700">
-                <svg className="w-6 h-6 text-red-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                </svg>
-                <div>
-                  <p className="font-medium">Failed to load treatments</p>
-                  <p className="text-sm">{err}</p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Enhanced skeleton loading */}
-          {loading && (
-            <div className="space-y-8">
-              {[...Array(3)].map((_, categoryIndex) => (
-                <div key={categoryIndex} className="space-y-4">
-                  <div className="h-8 w-48 bg-slate-200 rounded-lg animate-pulse" />
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {[...Array(3)].map((_, cardIndex) => (
-                      <div key={cardIndex} className="card p-6 space-y-4">
-                        <div className="h-6 w-3/4 bg-slate-200 rounded animate-pulse" />
-                        <div className="space-y-2">
-                          <div className="h-4 w-full bg-slate-100 rounded animate-pulse" />
-                          <div className="h-4 w-5/6 bg-slate-100 rounded animate-pulse" />
-                        </div>
-                        <div className="h-4 w-1/3 bg-slate-200 rounded animate-pulse" />
-                        <div className="flex gap-3 pt-2">
-                          <div className="h-10 w-full bg-slate-100 rounded-lg animate-pulse" />
-                          <div className="h-10 w-full bg-slate-200 rounded-lg animate-pulse" />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
           {/* Enhanced treatment groups */}
-          {!loading && services.length > 0 && (
+          {services.length > 0 && (
             <div className="space-y-6 sm:space-y-8">
               {grouped.map(({ key, label, meta, items }, index) => (
                 <details key={key} className="group card-elevated overflow-hidden animate-fade-in-up" style={{animationDelay: `${index * 0.1}s`}}>
@@ -262,8 +256,8 @@ export default function ServicesPage() {
                   {items.length > 0 && (
                     <div className="px-4 pb-4 sm:px-6 sm:pb-6">
                       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 animate-fade-in-up">
-                        {items.map((s) => (
-                          <ServiceCard key={s.service_id} s={s} />
+                        {items.map((treatment) => (
+                          <TreatmentCard key={treatment.baseName} treatment={treatment} />
                         ))}
                       </div>
                     </div>
@@ -274,7 +268,7 @@ export default function ServicesPage() {
           )}
 
           {/* Empty state */}
-          {!loading && services.length === 0 && !err && (
+          {services.length === 0 && (
             <div className="card-elevated p-12 text-center animate-fade-in-up">
               <div className="max-w-md mx-auto">
                 <svg className="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
