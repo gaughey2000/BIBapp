@@ -12,8 +12,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          router: ['react-router-dom'],
-          calendar: ['react-day-picker', '@fullcalendar/core', '@fullcalendar/react', '@fullcalendar/daygrid']
+          router: ['react-router-dom']
         }
       }
     },

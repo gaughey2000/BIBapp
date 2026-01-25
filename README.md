@@ -3,6 +3,7 @@
 Static marketing site for BIB Aesthetics, built with React + Vite.
 
 ## Tech Stack
+
 - React
 - Vite
 - Tailwind CSS
