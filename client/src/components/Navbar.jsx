@@ -37,6 +37,15 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-2">
             <NavLink
+              to="/"
+              end
+              className={({ isActive }) =>
+                `${linkBase} ${isActive ? active : inactive}`
+              }
+            >
+              Home
+            </NavLink>
+            <NavLink
               to="/services"
               className={({ isActive }) =>
                 `${linkBase} ${isActive ? active : inactive}`
@@ -113,12 +122,13 @@ export default function Navbar() {
       {open && (
         <div className="md:hidden nav-frosted border-t border-[color:var(--rose)]/20 mobile-menu animate-slide-down">
           <nav className="container-narrow py-4 space-y-2">
-            <a
-              href={BOOKING_URL}
-              target="_blank"
-              rel="noreferrer"
+            <NavLink
+              to="/"
+              end
               onClick={() => setOpen(false)}
-              className={`block ${linkBase} ${inactive}`}
+              className={({ isActive }) =>
+                `block ${linkBase} ${isActive ? active : inactive}`
+              }
             >
               <div className="flex items-center gap-3">
                 <svg
@@ -131,12 +141,12 @@ export default function Navbar() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1v-9.5z"
                   />
                 </svg>
-                Book
+                Home
               </div>
-            </a>
+            </NavLink>
             <NavLink
               to="/services"
               onClick={() => setOpen(false)}
