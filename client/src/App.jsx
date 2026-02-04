@@ -20,14 +20,18 @@ import CookiePolicyPage from "./pages/CookiePolicyPage";
 
 // Fallback
 function NotFound() {
-  return <div style={{ padding: 24 }}><h2>Page not found</h2></div>;
+  return (
+    <div style={{ padding: 24 }}>
+      <h2>Page not found</h2>
+    </div>
+  );
 }
 
 export default function App() {
   return (
     <ThemeProvider>
       <ErrorBoundary>
-        <Navbar /> 
+        <Navbar />
         <Routes>
           {/* Public */}
           <Route path="/" element={<HomePage />} />
@@ -36,7 +40,7 @@ export default function App() {
           <Route path="/book" element={<ExternalBooking />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/about" element={<AboutPage />} />
-          
+
           {/* Legal Pages */}
           <Route path="/privacy" element={<PrivacyPolicyPage />} />
           <Route path="/terms" element={<TermsPage />} />
@@ -47,7 +51,7 @@ export default function App() {
         </Routes>
 
         <Footer />
-        
+
         {/* Cookie Consent Banner */}
         <CookieConsent />
       </ErrorBoundary>
