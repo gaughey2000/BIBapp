@@ -1,22 +1,28 @@
-// client/src/pages/PrivacyPolicyPage.jsx
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default function PrivacyPolicyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
         <div className="mb-8">
-          <Link to="/" className="text-rose-600 hover:text-rose-700 text-sm mb-4 inline-block">
+          <Link
+            to="/"
+            className="text-rose-600 hover:text-rose-700 text-sm mb-4 inline-block"
+          >
             ← Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="text-gray-600">
+            Last updated:{" "}
+            {new Date().toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         </div>
 
-        {/* Content */}
         <div className="prose prose-rose max-w-none bg-white rounded-xl shadow-sm p-8 space-y-6">
-          
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduction</h2>
             <p className="text-gray-700 leading-relaxed">
@@ -29,7 +35,7 @@ export default function PrivacyPolicyPage() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">2. Information We Collect</h2>
-            
+
             <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">2.1 Personal Information</h3>
             <p className="text-gray-700 leading-relaxed">When you book an appointment, we collect:</p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
@@ -51,7 +57,8 @@ export default function PrivacyPolicyPage() {
 
             <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">2.3 Cookies</h3>
             <p className="text-gray-700 leading-relaxed">
-              We use cookies and similar technologies to enhance your experience. See our <Link to="/cookie-policy" className="text-rose-600 hover:text-rose-700">Cookie Policy</Link> for details.
+              We use cookies and similar technologies to enhance your experience. See our{" "}
+              <Link to="/cookie-policy" className="text-rose-600 hover:text-rose-700">Cookie Policy</Link> for details.
             </p>
           </section>
 
@@ -193,10 +200,8 @@ export default function PrivacyPolicyPage() {
               <p className="text-gray-700">Address: Wycliffe House, Water Lane, Wilmslow, Cheshire SK9 5AF</p>
             </div>
           </section>
-
         </div>
 
-        {/* Footer Links */}
         <div className="mt-8 text-center space-x-4 text-sm">
           <Link to="/terms" className="text-rose-600 hover:text-rose-700">Terms & Conditions</Link>
           <span className="text-gray-400">•</span>

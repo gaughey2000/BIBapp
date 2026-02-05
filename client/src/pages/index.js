@@ -1,0 +1,10 @@
+export { default as AboutPage } from "./AboutPage";
+export { default as ContactPage } from "./ContactPage";
+export { default as CookiePolicyPage } from "./CookiePolicyPage";
+export { default as CancellationPolicyPage } from "./CancellationPolicyPage";
+export { default as ExternalBooking } from "./ExternalBooking";
+export { default as HomePage } from "./HomePage";
+export { default as PrivacyPolicyPage } from "./PrivacyPolicyPage";
+export { default as ServiceDetailPage } from "./ServiceDetailPage";
+export { default as ServicesPage } from "./ServicesPage";
+export { default as TermsPage } from "./TermsPage";

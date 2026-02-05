@@ -1,13 +1,10 @@
 {
     "name": "bib-root",
-    "private": true,
-    "scripts": {
-        "dev": "npm -C client run dev",
-        "test": "npm -C client test",
-        "build": "npm -C client run build",
-        "lint": "npm -C client run lint",
-        "check": "npm audit && npm outdated",
-        "install-all": "npm install && npm -C client install"
-    },
-    "devDependencies": {}
+  "private": true,
+  "scripts": {
+    "dev": "npm -C client run dev",
+    "build": "npm -C client run build",
+    "install-all": "npm install && npm -C client install"
+  },
+  "devDependencies": {}
 }

@@ -1,37 +1,37 @@
-// client/src/pages/HomePage.jsx
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { BOOKING_URL } from "../constants/links";
-import ReviewsCarousel from "../components/ReviewsCarousel";
+import { BOOKING_URL } from "../data";
+import { ReviewsCarousel, useBookingModal } from "../ui";
 
 export default function HomePage() {
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
+  const { setOpen: setBookingOpen } = useBookingModal();
 
   useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    const sync = () => setMuted(v.muted);
-    v.addEventListener("volumechange", sync);
-    return () => v.removeEventListener("volumechange", sync);
+    const video = videoRef.current;
+    if (!video) return;
+    const sync = () => setMuted(video.muted);
+    video.addEventListener("volumechange", sync);
+    return () => video.removeEventListener("volumechange", sync);
   }, []);
 
   const toggleMute = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = !v.muted;
-    setMuted(v.muted);
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = !video.muted;
+    setMuted(video.muted);
   };
 
   const togglePause = () => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (v.paused) {
-      v.play();
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.play();
       setPaused(false);
     } else {
-      v.pause();
+      video.pause();
       setPaused(true);
     }
   };
@@ -41,14 +41,105 @@ export default function HomePage() {
       id="main"
       className="min-h-screen bg-gradient-to-br from-white via-[color:var(--cream)] to-slate-50"
     >
-      {/* Hero */}
-      <section className="py-2 sm:py-4 lg:py-8">
-        <div
-          className="container-narrow grid items-center gap-4 lg:gap-16 lg:grid-cols-2"
-          style={{ minHeight: "calc(100svh - 160px)" }}
-        >
-          {/* Left: Copy */}
-          <div className="py-2 sm:py-4 md:py-6 lg:py-0 animate-fade-in-up order-2 lg:order-1">
+      <section className="w-full">
+        <div className="relative w-full animate-fade-in-up">
+          <div className="relative overflow-hidden aspect-video w-full video-container">
+            <video
+              ref={videoRef}
+              className="h-full w-full object-cover"
+              src="/WelcomeVideo.mp4"
+              autoPlay
+              loop
+              playsInline
+              muted={muted}
+            />
+            <div className="video-overlay absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none" />
+            <div className="video-overlay absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
+            <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 transition-opacity duration-300">
+              <button
+                onClick={toggleMute}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/25 backdrop-blur-md border border-white/40 text-white shadow-lg hover:bg-white/35 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200 hover:scale-110 active:scale-95"
+                aria-label={muted ? "Unmute video" : "Mute video"}
+              >
+                {muted ? (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
+                    />
+                  </svg>
+                )}
+              </button>
+              <button
+                onClick={togglePause}
+                className="flex items-center justify-center w-10 h-10 rounded-full bg-white/25 backdrop-blur-md border border-white/40 text-white shadow-lg hover:bg-white/35 focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200 hover:scale-110 active:scale-95"
+                aria-label={paused ? "Play video" : "Pause video"}
+              >
+                {paused ? (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m2 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-6 sm:py-8 lg:py-12">
+        <div className="container-narrow">
+          <div className="py-2 sm:py-4 md:py-6 lg:py-0 animate-fade-in-up">
             <div className="mb-4 md:mb-6">
               <div className="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-[color:var(--rose)]/10 rounded-full text-xs sm:text-sm font-medium text-[color:var(--rose)] mb-3 sm:mb-4">
                 <svg
@@ -67,29 +158,22 @@ export default function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900 mb-3 sm:mb-4">
-              Welcome to BIB{" "}
+              Natural beauty,{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--rose-dark)]">
-                Aesthetic Clinic,
+                enhanced with care
               </span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mb-5 sm:mb-6 leading-relaxed">
-              Our aim is to provide individual, tailored treatments that deliver
-              natural-looking results. All aesthetic treatments are carried out
-              by Rachel McGaughey, an experienced registered nurse and
-              independent prescriber. Rachel is dedicated to the highest ethical
-              standards and is committed to delivering safe, effective, and
-              personalised care. We use the latest innovative treatments and
-              premium products to help you look and feel refreshed, boost your
-              confidence, and enhance your natural appearance and overall
-              wellbeing.
+              Evidence-based treatments with flexible appointments, delivered
+              with professionalism and a personal touch that makes all the
+              difference.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-5 sm:mb-6">
-              <a
-                href={BOOKING_URL}
-                target="_blank"
-                rel="noreferrer"
+              <button
+                type="button"
+                onClick={() => setBookingOpen(true)}
                 className="btn btn-primary btn-lg group w-full sm:w-auto"
               >
                 <svg
@@ -106,7 +190,7 @@ export default function HomePage() {
                   />
                 </svg>
                 Book appointment
-              </a>
+              </button>
               <Link
                 to="/services"
                 className="btn btn-secondary btn-lg group w-full sm:w-auto"
@@ -128,7 +212,6 @@ export default function HomePage() {
               </Link>
             </div>
 
-            {/* Trust indicators */}
             <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-500">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <svg
@@ -174,228 +257,9 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-
-          {/* Right: Video */}
-          <div className="order-1 lg:order-2">
-            {/* Mobile: Full width video breaking out of container */}
-            <div className="lg:hidden relative animate-fade-in-up -mx-4 sm:-mx-6 lg:mx-0">
-              <div
-                className="relative overflow-hidden aspect-video group video-container"
-                style={{
-                  width: "100vw",
-                }}
-              >
-                <video
-                  ref={videoRef}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src="/WelcomeVideo.mp4"
-                  autoPlay
-                  loop
-                  playsInline
-                  muted={muted}
-                />
-
-                {/* Gradient overlays */}
-                <div className="video-overlay absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                <div className="video-overlay absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
-
-                {/* Controls - Mobile */}
-                <div className="absolute bottom-4 right-4 flex gap-2 opacity-100 transition-opacity duration-300">
-                  <button
-                    onClick={toggleMute}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white/25 backdrop-blur-md 
-                             border border-white/40 text-white shadow-lg hover:bg-white/35 
-                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
-                             hover:scale-110 active:scale-95"
-                    aria-label={muted ? "Unmute video" : "Mute video"}
-                  >
-                    {muted ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                  <button
-                    onClick={togglePause}
-                    className="flex items-center justify-center w-10 h-10 rounded-full bg-white/25 backdrop-blur-md 
-                             border border-white/40 text-white shadow-lg hover:bg-white/35 
-                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
-                             hover:scale-110 active:scale-95"
-                    aria-label={paused ? "Play video" : "Pause video"}
-                  >
-                    {paused ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m2 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Desktop: Styled video with container */}
-            <div className="hidden lg:block relative w-full max-w-2xl ml-auto animate-fade-in-up lg:animate-slide-in-right">
-              <div className="relative overflow-hidden rounded-2xl lg:rounded-3xl border border-slate-200/50 shadow-xl lg:shadow-2xl bg-white/10 backdrop-blur-sm aspect-video group video-container">
-                <video
-                  ref={videoRef}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  src="/WelcomeVideo.mp4"
-                  autoPlay
-                  loop
-                  playsInline
-                  muted={muted}
-                />
-
-                {/* Gradient overlays */}
-                <div className="video-overlay absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
-                <div className="video-overlay absolute inset-0 bg-gradient-to-br from-[color:var(--rose)]/5 to-transparent pointer-events-none" />
-
-                {/* Controls - Desktop */}
-                <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 flex gap-2 sm:gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <button
-                    onClick={toggleMute}
-                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/25 backdrop-blur-md 
-                             border border-white/40 text-white shadow-lg hover:bg-white/35 
-                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
-                             hover:scale-110 active:scale-95"
-                    aria-label={muted ? "Unmute video" : "Mute video"}
-                  >
-                    {muted ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                  <button
-                    onClick={togglePause}
-                    className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/25 backdrop-blur-md 
-                             border border-white/40 text-white shadow-lg hover:bg-white/35 
-                             focus:outline-none focus:ring-2 focus:ring-white/50 transition-all duration-200
-                             hover:scale-110 active:scale-95"
-                    aria-label={paused ? "Play video" : "Pause video"}
-                  >
-                    {paused ? (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14.828 14.828a4 4 0 01-5.656 0M9 10h1m4 0h1m-6 4h8m2 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
-      {/* Client Reviews Section */}
       <ReviewsCarousel />
     </main>
   );

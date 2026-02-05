@@ -1,23 +1,26 @@
 # BIB Aesthetics Website
 
-Static marketing site for BIB Aesthetics, built with React + Vite.
+Marketing site for BIB Aesthetics, built with React + Vite.
 
-## Tech Stack
-
-- React
-- Vite
-- Tailwind CSS
-- React Router
-
-## Local Development
+## Quick Start
 
 ```bash
-npm install
+npm run install-all
 npm run dev
 ```
 
-## Build for Production
+## Build
 
 ```bash
 npm run build
 ```
+
+## Project Map
+
+`client/src/main.jsx` - App bootstrap and router mounting  
+`client/src/App.jsx` - Routes + shared layout (navbar/footer)  
+`client/src/pages/` - All page content (Home, Services, Legal, etc.)  
+`client/src/ui.jsx` - Shared UI components and theme context  
+`client/src/data.js` - Services list, treatment content, constants  
+`client/src/styles.css` - Tailwind + custom styles  
+`client/public/` - Images, video, and icons

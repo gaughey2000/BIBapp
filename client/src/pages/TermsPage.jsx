@@ -1,22 +1,28 @@
-// client/src/pages/TermsPage.jsx
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default function TermsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
         <div className="mb-8">
-          <Link to="/" className="text-rose-600 hover:text-rose-700 text-sm mb-4 inline-block">
+          <Link
+            to="/"
+            className="text-rose-600 hover:text-rose-700 text-sm mb-4 inline-block"
+          >
             ← Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Terms & Conditions</h1>
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="text-gray-600">
+            Last updated:{" "}
+            {new Date().toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         </div>
 
-        {/* Content */}
         <div className="prose prose-rose max-w-none bg-white rounded-xl shadow-sm p-8 space-y-6">
-          
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Agreement to Terms</h2>
             <p className="text-gray-700 leading-relaxed">
@@ -46,7 +52,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">3. Booking and Appointments</h2>
-            
+
             <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">3.1 Making a Booking</h3>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
               <li>Bookings can be made through our online booking system or by phone</li>
@@ -87,7 +93,7 @@ export default function TermsPage() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Medical Information and Consent</h2>
-            
+
             <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">5.1 Medical History</h3>
             <p className="text-gray-700 leading-relaxed">
               You must provide accurate medical history and disclose:
@@ -243,10 +249,8 @@ export default function TermsPage() {
               By booking an appointment or using our services, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
             </p>
           </section>
-
         </div>
 
-        {/* Footer Links */}
         <div className="mt-8 text-center space-x-4 text-sm">
           <Link to="/privacy" className="text-rose-600 hover:text-rose-700">Privacy Policy</Link>
           <span className="text-gray-400">•</span>

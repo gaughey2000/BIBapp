@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { BOOKING_URL } from "../constants/links";
+import { BOOKING_URL } from "../data";
 
 export default function ExternalBooking() {
   useEffect(() => {

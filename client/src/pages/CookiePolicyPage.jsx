@@ -1,22 +1,28 @@
-// client/src/pages/CookiePolicyPage.jsx
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 
 export default function CookiePolicyPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-50 to-white">
       <div className="max-w-4xl mx-auto px-6 py-12">
-        {/* Header */}
         <div className="mb-8">
-          <Link to="/" className="text-rose-600 hover:text-rose-700 text-sm mb-4 inline-block">
+          <Link
+            to="/"
+            className="text-rose-600 hover:text-rose-700 text-sm mb-4 inline-block"
+          >
             ← Back to Home
           </Link>
           <h1 className="text-4xl font-bold text-gray-900 mb-2">Cookie Policy</h1>
-          <p className="text-gray-600">Last updated: {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+          <p className="text-gray-600">
+            Last updated:{" "}
+            {new Date().toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              year: "numeric",
+            })}
+          </p>
         </div>
 
-        {/* Content */}
         <div className="prose prose-rose max-w-none bg-white rounded-xl shadow-sm p-8 space-y-6">
-          
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">1. What Are Cookies?</h2>
             <p className="text-gray-700 leading-relaxed">
@@ -29,9 +35,7 @@ export default function CookiePolicyPage() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">2. How We Use Cookies</h2>
-            <p className="text-gray-700 leading-relaxed">
-              We use cookies to:
-            </p>
+            <p className="text-gray-700 leading-relaxed">We use cookies to:</p>
             <ul className="list-disc pl-6 text-gray-700 space-y-2">
               <li>Remember your preferences and settings</li>
               <li>Understand how you use our website</li>
@@ -42,9 +46,8 @@ export default function CookiePolicyPage() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">3. Types of Cookies We Use</h2>
-            
+
             <div className="space-y-6 mt-6">
-              {/* Essential Cookies */}
               <div className="border-l-4 border-rose-500 pl-4">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">3.1 Essential Cookies (Strictly Necessary)</h3>
                 <p className="text-gray-700 leading-relaxed mb-2">
@@ -70,7 +73,6 @@ export default function CookiePolicyPage() {
                 </div>
               </div>
 
-              {/* Functional Cookies */}
               <div className="border-l-4 border-blue-500 pl-4">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">3.2 Functional Cookies</h3>
                 <p className="text-gray-700 leading-relaxed mb-2">
@@ -96,7 +98,6 @@ export default function CookiePolicyPage() {
                 </div>
               </div>
 
-              {/* Analytics Cookies */}
               <div className="border-l-4 border-green-500 pl-4">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">3.3 Analytics Cookies (Optional)</h3>
                 <p className="text-gray-700 leading-relaxed mb-2">
@@ -126,7 +127,8 @@ export default function CookiePolicyPage() {
                   </table>
                 </div>
                 <p className="text-sm text-gray-600 mt-3">
-                  You can opt out of Google Analytics: <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:text-rose-700">Google Analytics Opt-out</a>
+                  You can opt out of Google Analytics:{" "}
+                  <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:text-rose-700">Google Analytics Opt-out</a>
                 </p>
               </div>
             </div>
@@ -148,7 +150,7 @@ export default function CookiePolicyPage() {
 
           <section>
             <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Managing Cookies</h2>
-            
+
             <h3 className="text-xl font-semibold text-gray-800 mt-4 mb-2">5.1 Browser Settings</h3>
             <p className="text-gray-700 leading-relaxed">
               Most web browsers allow you to control cookies through settings. You can:
@@ -229,10 +231,8 @@ export default function CookiePolicyPage() {
               We are committed to transparency about how we use cookies. You are always in control of your cookie preferences.
             </p>
           </section>
-
         </div>
 
-        {/* Footer Links */}
         <div className="mt-8 text-center space-x-4 text-sm">
           <Link to="/privacy" className="text-rose-600 hover:text-rose-700">Privacy Policy</Link>
           <span className="text-gray-400">•</span>

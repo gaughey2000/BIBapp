@@ -2,9 +2,10 @@ export default function ContactPage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-[color:var(--cream)] py-6 sm:py-8 md:py-12">
       <div className="container-narrow grid md:grid-cols-2 gap-6 sm:gap-8 items-start">
-        {/* Left: clinic info */}
         <div className="animate-fade-in-up">
-          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">Contact us</h1>
+          <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight text-slate-900">
+            Contact us
+          </h1>
           <p className="mt-2 sm:mt-3 text-sm sm:text-base text-slate-600">
             Have a question or want to book? We'd love to hear from you.
           </p>
@@ -19,11 +20,16 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <strong className="block font-medium text-slate-900 text-sm sm:text-base">Address</strong>
+                  <strong className="block font-medium text-slate-900 text-sm sm:text-base">
+                    Address
+                  </strong>
                   <p className="text-sm sm:text-base text-slate-600 mt-1">
-                    BIB Aesthetics<br />
-                    9 Maryland Avenue<br />
-                    Bolton<br />
+                    BIB Aesthetics
+                    <br />
+                    9 Maryland Avenue
+                    <br />
+                    Bolton
+                    <br />
                     BL2 6DL
                   </p>
                 </div>
@@ -61,11 +67,9 @@ export default function ContactPage() {
                 </div>
               </div>
             </div>
-
           </div>
         </div>
 
-        {/* Right: email link */}
         <div className="card p-4 sm:p-6 shadow-sm animate-fade-in-up">
           <h2 className="text-lg sm:text-xl font-semibold text-slate-900">Email us</h2>
           <p className="mt-2 text-sm sm:text-base text-slate-600">

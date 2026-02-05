@@ -1,2 +1,0 @@
-export const BOOKING_URL =
-  "https://l.instagram.com/?u=https%3A%2F%2Fportal.aestheticnursesoftware.com%2Fbook-online%2F14474%3Futm_source%3Dig%26utm_medium%3Dsocial%26utm_content%3Dlink_in_bio%26fbclid%3DPAZXh0bgNhZW0CMTEAc3J0YwZhcHBfaWQMMjU2MjgxMDQwNTU4AAGnjLh1WnGkA6wU7WKeDmEF_26XNTUmMYy316iO0MSXeFgb4F4ZvQ8DRmhLuZU_aem_FL-OBy20-1wV8J2AkXqfsw&e=AT2xzFx7arjo_k1CocG6ZoGuHtBqniF3-Ed4y9nrAGifZRbzB6TKZBSFs4kxvjiWiWuUnxwtfkIt9QRixFlpLGPs-Si7LFQSGJvlbn7Oew";
