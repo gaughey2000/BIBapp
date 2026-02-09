@@ -409,17 +409,16 @@ html.dark div {
   color: #cbd5e1;
 }
 
-/* Override page-specific backgrounds in dark mode - AGGRESSIVE */
+/* Layout backgrounds: let the body gradient show through */
 html.dark main,
 html.dark section,
-html.dark div[class*="bg-gradient"]:not(.video-overlay),
-html.dark div[class*="min-h-screen"] {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+html.dark [class*="min-h-screen"] {
+  background: transparent !important;
 }
 
-/* Extra specific overrides for stubborn backgrounds */
-html.dark .min-h-screen {
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+/* Neutralize light gradients in dark mode while preserving accents/buttons */
+html.dark [class*="bg-gradient"]:not(.video-overlay):not(.btn-primary):not(.btn-danger):not(.btn-success):not([class*="bg-clip-text"]) {
+  background: transparent !important;
 }
 
 html.dark [class*="bg-white"]:not(.video-container),

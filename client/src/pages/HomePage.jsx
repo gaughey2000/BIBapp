@@ -43,7 +43,7 @@ export default function HomePage() {
     >
       <section className="w-full">
         <div className="relative w-full animate-fade-in-up">
-          <div className="relative overflow-hidden aspect-video w-full video-container">
+          <div className="relative overflow-hidden aspect-video lg:aspect-[21/9] lg:max-h-[70vh] w-full video-container">
             <video
               ref={videoRef}
               className="h-full w-full object-cover"
@@ -158,16 +158,23 @@ export default function HomePage() {
             </div>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-slate-900 mb-3 sm:mb-4">
-              Natural beauty,{" "}
+              Welcome to BIB{" "}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[color:var(--rose)] to-[color:var(--rose-dark)]">
-                enhanced with care
+                <br />
+                Aesthetic Clinic.
               </span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-slate-600 max-w-2xl mb-5 sm:mb-6 leading-relaxed">
-              Evidence-based treatments with flexible appointments, delivered
-              with professionalism and a personal touch that makes all the
-              difference.
+              Our aim is to provide individual, tailored treatments that deliver
+              natural-looking results. All aesthetic treatments are carried out
+              by Rachel McGaughey, an experienced registered nurse and
+              independent prescriber. Rachel is dedicated to the highest ethical
+              standards and is committed to delivering safe, effective, and
+              personalised care. We use the latest innovative treatments and
+              premium products to help you look and feel refreshed, boost your
+              confidence, and enhance your natural appearance and overall
+              wellbeing.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-5 sm:mb-6">

@@ -221,7 +221,7 @@ export default function CookiePolicyPage() {
             <div className="bg-rose-50 p-6 rounded-lg mt-4">
               <p className="text-gray-800"><strong>BIB Beauty</strong></p>
               <p className="text-gray-700">Email: <a href="mailto:privacy@bibbeauty.co.uk" className="text-rose-600 hover:text-rose-700">privacy@bibbeauty.co.uk</a></p>
-              <p className="text-gray-700">Address: [Your Business Address]</p>
+              <p className="text-gray-700">Address: BiB Clinic, 9 Maryland Avenue, Bolton</p>
             </div>
           </section>
 

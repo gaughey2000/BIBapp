@@ -7,7 +7,11 @@ function Expandable({ children, collapsedHeight = 140 }) {
   return (
     <div>
       <div
-        className={expanded ? "relative" : "relative overflow-hidden"}
+        className={
+          expanded
+            ? "relative transition-all duration-300"
+            : "relative overflow-hidden transition-all duration-300"
+        }
         style={expanded ? undefined : { maxHeight: collapsedHeight }}
       >
         <div className="space-y-3">{children}</div>
@@ -18,9 +22,13 @@ function Expandable({ children, collapsedHeight = 140 }) {
       <button
         type="button"
         onClick={() => setExpanded((value) => !value)}
-        className="mt-3 text-sm font-medium text-[color:var(--rose)] hover:underline"
+        className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-[color:var(--rose)] hover:text-[color:var(--rose-dark)] transition-colors"
+        aria-expanded={expanded}
       >
         {expanded ? "Show less" : "Show more"}
+        <span className={`transition-transform ${expanded ? "rotate-180" : ""}`}>
+          ▾
+        </span>
       </button>
     </div>
   );
@@ -28,6 +36,13 @@ function Expandable({ children, collapsedHeight = 140 }) {
 
 export default function ServicesPage() {
   const { setOpen: setBookingOpen } = useBookingModal();
+  const sections = [
+    { id: "anti-wrinkle", label: "Anti-Wrinkle" },
+    { id: "dermal-filler", label: "Dermal Filler" },
+    { id: "chemical-peels", label: "Chemical Peels" },
+    { id: "skin-treatments", label: "Skin Treatments" },
+    { id: "hyperhidrosis", label: "Hyperhidrosis" },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-white via-[color:var(--cream)] to-slate-50">
@@ -64,10 +79,54 @@ export default function ServicesPage() {
               className="h-28 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />
           </div>
+          <div className="mt-6 flex flex-wrap justify-center gap-2">
+            {sections.map((section) => (
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                className="px-3 py-1.5 text-xs sm:text-sm rounded-full bg-white/80 border border-slate-200 text-slate-700 hover:border-[color:var(--rose)] hover:text-[color:var(--rose)] transition-all"
+              >
+                {section.label}
+              </a>
+            ))}
+          </div>
         </section>
 
         <section className="space-y-6 sm:space-y-8">
-          <article className="card-elevated p-5 sm:p-7 animate-fade-in-up">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="card-elevated p-4 sm:p-5">
+              <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">
+                Consultation
+              </p>
+              <p className="text-sm sm:text-base text-slate-700">
+                Every treatment starts with a clinical assessment to ensure
+                suitability and safe outcomes.
+              </p>
+            </div>
+            <div className="card-elevated p-4 sm:p-5">
+              <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">
+                Results
+              </p>
+              <p className="text-sm sm:text-base text-slate-700">
+                Natural-looking results with clear expectations on timing,
+                maintenance, and aftercare.
+              </p>
+            </div>
+            <div className="card-elevated p-4 sm:p-5">
+              <p className="text-xs uppercase tracking-wider text-slate-500 mb-1">
+                Aftercare
+              </p>
+              <p className="text-sm sm:text-base text-slate-700">
+                Complimentary review where needed and guidance on long-term
+                skin health.
+              </p>
+            </div>
+          </div>
+
+          <article
+            id="anti-wrinkle"
+            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Anti-Wrinkle Treatment
             </h2>
@@ -98,7 +157,10 @@ export default function ServicesPage() {
             </Expandable>
           </article>
 
-          <article className="card-elevated p-5 sm:p-7 animate-fade-in-up">
+          <article
+            id="dermal-filler"
+            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Dermal Filler
             </h2>
@@ -126,7 +188,10 @@ export default function ServicesPage() {
             </Expandable>
           </article>
 
-          <article className="card-elevated p-5 sm:p-7 animate-fade-in-up">
+          <article
+            id="chemical-peels"
+            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Chemical Peels
             </h2>
@@ -151,7 +216,10 @@ export default function ServicesPage() {
             </Expandable>
           </article>
 
-          <article className="card-elevated p-5 sm:p-7 animate-fade-in-up">
+          <article
+            id="skin-treatments"
+            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-4">
               Skin Treatments
             </h2>
@@ -191,7 +259,10 @@ export default function ServicesPage() {
             </Expandable>
           </article>
 
-          <article className="card-elevated p-5 sm:p-7 animate-fade-in-up">
+          <article
+            id="hyperhidrosis"
+            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+          >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Hyperhidrosis (Excessive Sweating)
             </h2>
