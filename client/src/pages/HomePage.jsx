@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { BOOKING_URL } from "../data";
+import { getAssetCandidates, handleVideoAssetError } from "../assetPaths";
 import { ReviewsCarousel, useBookingModal } from "../ui";
 
 export default function HomePage() {
-  const assetBase = import.meta.env.BASE_URL;
+  const [welcomeVideoSrc] = useState(() => getAssetCandidates("WelcomeVideo.mp4")[0]);
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
@@ -48,7 +49,9 @@ export default function HomePage() {
             <video
               ref={videoRef}
               className="h-full w-full object-cover"
-              src={`${assetBase}WelcomeVideo.mp4`}
+              src={welcomeVideoSrc}
+              data-asset-try="0"
+              onError={(event) => handleVideoAssetError(event, "WelcomeVideo.mp4")}
               autoPlay
               loop
               playsInline

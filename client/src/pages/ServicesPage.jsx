@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { getAssetCandidates, handleImageAssetError } from "../assetPaths";
 import { useBookingModal } from "../ui";
 
 function Expandable({ children, collapsedHeight = 140 }) {
@@ -35,7 +36,8 @@ function Expandable({ children, collapsedHeight = 140 }) {
 }
 
 export default function ServicesPage() {
-  const assetBase = import.meta.env.BASE_URL;
+  const treatmentImageSrc = getAssetCandidates("NurseInjectingClient.jpg")[0];
+  const resultsImageSrc = getAssetCandidates("ClientSmillingAtResults.jpg")[0];
   const { setOpen: setBookingOpen } = useBookingModal();
   const sections = [
     { id: "anti-wrinkle", label: "Anti-Wrinkle" },
@@ -70,13 +72,21 @@ export default function ServicesPage() {
           </p>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
             <img
-              src={`${assetBase}NurseInjectingClient.jpg`}
+              src={treatmentImageSrc}
               alt="Treatment in progress"
+              data-asset-try="0"
+              onError={(event) =>
+                handleImageAssetError(event, "NurseInjectingClient.jpg")
+              }
               className="h-36 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />
             <img
-              src={`${assetBase}ClientSmillingAtResults.jpg`}
+              src={resultsImageSrc}
               alt="Client results"
+              data-asset-try="0"
+              onError={(event) =>
+                handleImageAssetError(event, "ClientSmillingAtResults.jpg")
+              }
               className="hidden sm:block h-36 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />
           </div>

@@ -1,5 +1,8 @@
+import { getAssetCandidates, handleImageAssetError } from "../assetPaths";
+
 export default function AboutPage() {
-  const assetBase = import.meta.env.BASE_URL;
+  const nurseImageSrc = getAssetCandidates("NurseWorking2.jpg")[0];
+  const receptionistImageSrc = getAssetCandidates("ReceptionistSmiling.jpg")[0];
   const credentials = [
     "Registered nurse",
     "Independent prescriber",
@@ -50,14 +53,20 @@ export default function AboutPage() {
             </p>
           </div>
           <img
-            src={`${assetBase}NurseWorking2.jpg`}
+            src={nurseImageSrc}
             alt="Nurse consultation with client at BIB Clinic"
+            data-asset-try="0"
+            onError={(event) => handleImageAssetError(event, "NurseWorking2.jpg")}
             className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-64 sm:h-80 md:h-full animate-fade-in-up order-1 md:order-2"
           />
 
           <img
-            src={`${assetBase}ReceptionistSmiling.jpg`}
+            src={receptionistImageSrc}
             alt="Receptionist smiling at BIB Clinic"
+            data-asset-try="0"
+            onError={(event) =>
+              handleImageAssetError(event, "ReceptionistSmiling.jpg")
+            }
             className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-64 sm:h-80 md:h-full animate-fade-in-up order-3"
           />
           <div className="animate-fade-in-up order-4">

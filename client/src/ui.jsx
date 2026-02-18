@@ -1,5 +1,6 @@
 import { Component, createContext, useContext, useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { getAssetCandidates, handleImageAssetError } from "./assetPaths";
 import { BOOKING_URL, commonFAQ, treatmentDetails } from "./data";
 
 const ThemeContext = createContext();
@@ -145,7 +146,7 @@ export function ThemeToggle() {
 }
 
 export function Navbar() {
-  const assetBase = import.meta.env.BASE_URL;
+  const logoSrc = getAssetCandidates("logo-full-rose.png")[0];
   const [open, setOpen] = useState(false);
   const { setOpen: setBookingOpen } = useBookingModal();
 
@@ -169,8 +170,10 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <img
-              src={`${assetBase}logo-full-rose.png`}
+              src={logoSrc}
               alt="BIB Clinic logo"
+              data-asset-try="0"
+              onError={(event) => handleImageAssetError(event, "logo-full-rose.png")}
               className="h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
             />
           </Link>
