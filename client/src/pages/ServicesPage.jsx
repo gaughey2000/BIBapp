@@ -67,28 +67,30 @@ export default function ServicesPage() {
           <p className="text-sm sm:text-base text-slate-600 max-w-2xl mx-auto">
             A simple overview of our most popular treatments and what to expect.
           </p>
-          <div className="mt-6 grid grid-cols-2 gap-4 max-w-2xl mx-auto">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
             <img
               src="/NurseInjectingClient.jpg"
               alt="Treatment in progress"
-              className="h-28 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
+              className="h-36 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />
             <img
               src="/ClientSmillingAtResults.jpg"
               alt="Client results"
-              className="h-28 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
+              className="hidden sm:block h-36 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />
           </div>
-          <div className="mt-6 flex flex-wrap justify-center gap-2">
-            {sections.map((section) => (
-              <a
-                key={section.id}
-                href={`#${section.id}`}
-                className="px-3 py-1.5 text-xs sm:text-sm rounded-full bg-white/80 border border-slate-200 text-slate-700 hover:border-[color:var(--rose)] hover:text-[color:var(--rose)] transition-all"
-              >
-                {section.label}
-              </a>
-            ))}
+          <div className="mt-6 hidden sm:block">
+            <div className="flex w-max sm:w-auto sm:flex-wrap sm:justify-center gap-2">
+              {sections.map((section) => (
+                <a
+                  key={section.id}
+                  href={`#${section.id}`}
+                  className="whitespace-nowrap px-3 py-1.5 text-xs sm:text-sm rounded-full bg-white/80 border border-slate-200 text-slate-700 hover:border-[color:var(--rose)] hover:text-[color:var(--rose)] transition-all"
+                >
+                  {section.label}
+                </a>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -125,7 +127,7 @@ export default function ServicesPage() {
 
           <article
             id="anti-wrinkle"
-            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+            className="card-elevated p-4 sm:p-7 animate-fade-in-up scroll-mt-24"
           >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Anti-Wrinkle Treatment
@@ -159,7 +161,7 @@ export default function ServicesPage() {
 
           <article
             id="dermal-filler"
-            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+            className="card-elevated p-4 sm:p-7 animate-fade-in-up scroll-mt-24"
           >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Dermal Filler
@@ -190,7 +192,7 @@ export default function ServicesPage() {
 
           <article
             id="chemical-peels"
-            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+            className="card-elevated p-4 sm:p-7 animate-fade-in-up scroll-mt-24"
           >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Chemical Peels
@@ -218,7 +220,7 @@ export default function ServicesPage() {
 
           <article
             id="skin-treatments"
-            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+            className="card-elevated p-4 sm:p-7 animate-fade-in-up scroll-mt-24"
           >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-4">
               Skin Treatments
@@ -261,7 +263,7 @@ export default function ServicesPage() {
 
           <article
             id="hyperhidrosis"
-            className="card-elevated p-5 sm:p-7 animate-fade-in-up scroll-mt-24"
+            className="card-elevated p-4 sm:p-7 animate-fade-in-up scroll-mt-24"
           >
             <h2 className="text-xl sm:text-2xl font-semibold text-slate-900 mb-3">
               Hyperhidrosis (Excessive Sweating)

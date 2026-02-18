@@ -163,7 +163,7 @@ export function Navbar() {
     "text-slate-600 hover:text-slate-900 hover:bg-white/60 hover:backdrop-blur-sm";
 
   return (
-    <header className="sticky top-0 z-50 nav-frosted">
+    <header className="sticky top-0 z-50 nav-frosted relative">
       <div className="container-narrow">
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
@@ -256,8 +256,8 @@ export function Navbar() {
       </div>
 
       {open && (
-        <div className="md:hidden nav-frosted border-t border-[color:var(--rose)]/20 mobile-menu animate-slide-down">
-          <nav className="container-narrow py-4 space-y-2">
+        <div className="md:hidden absolute inset-x-0 top-full z-50 nav-frosted border-t border-[color:var(--rose)]/20 mobile-menu animate-slide-down max-h-[calc(100dvh-4rem)] overflow-y-auto overscroll-contain">
+          <nav className="container-narrow py-4 pb-6 space-y-2">
             <NavLink
               to="/"
               end

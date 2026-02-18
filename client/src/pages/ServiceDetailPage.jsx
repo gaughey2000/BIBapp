@@ -59,12 +59,12 @@ export default function ServiceDetailPage() {
                   {service.description}
                 </p>
               </div>
-              <div className="flex-shrink-0 md:text-right">
-                <div className="inline-flex items-baseline gap-2 bg-slate-50 px-4 py-2 rounded-lg md:flex-col md:items-end md:px-0 md:py-0 md:bg-transparent">
-                  <div className="text-2xl sm:text-3xl font-semibold text-[color:var(--rose)]">
+              <div className="flex-shrink-0 w-full md:w-auto md:text-right">
+                <div className="flex items-center justify-between gap-3 bg-slate-50 px-4 py-3 rounded-lg md:inline-flex md:items-end md:flex-col md:px-0 md:py-0 md:bg-transparent">
+                  <div className="text-xl sm:text-3xl font-semibold text-[color:var(--rose)]">
                     {toGBP(service.price_cents)}
                   </div>
-                  <div className="text-xs sm:text-sm text-slate-600">
+                  <div className="text-xs sm:text-sm text-slate-600 text-right">
                     {service.duration_min} min
                     {service.buffer_min ? ` (+${service.buffer_min})` : ""}
                   </div>

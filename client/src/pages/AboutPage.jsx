@@ -1,4 +1,12 @@
 export default function AboutPage() {
+  const credentials = [
+    "Registered nurse",
+    "Independent prescriber",
+    "Advanced nurse practitioner",
+    "Level 7 qualified in aesthetic medicine",
+    "Medical director",
+  ];
+
   return (
     <div className="min-h-screen bg-[color:var(--cream)] text-slate-800">
       <main className="container-narrow py-8 sm:py-12 md:py-16 space-y-8 sm:space-y-12">
@@ -13,12 +21,15 @@ export default function AboutPage() {
             <h2 className="text-xl sm:text-2xl font-semibold text-[color:var(--rose)] mb-2 sm:mb-3">
               Rachel McGaughey
             </h2>
-            <ul className="list-disc pl-5 space-y-1 text-sm sm:text-base text-slate-700">
-              <li>registered nurse</li>
-              <li>independent prescriber</li>
-              <li>advanced nurse practitioner</li>
-              <li>level 7 qualified in aesthetic medicine</li>
-              <li>medical director</li>
+            <ul className="mt-1 space-y-1.5 text-sm sm:text-base text-slate-700">
+              {credentials.map((credential) => (
+                <li
+                  key={credential}
+                  className="relative pl-6 py-1 leading-relaxed tracking-[0.01em] before:content-[''] before:absolute before:left-0 before:top-[0.78rem] before:h-1.5 before:w-1.5 before:rounded-full before:bg-[color:var(--rose)]/80"
+                >
+                  {credential}
+                </li>
+              ))}
             </ul>
             <br />
             <p className="leading-relaxed text-sm sm:text-base text-slate-700">
