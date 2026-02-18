@@ -145,6 +145,7 @@ export function ThemeToggle() {
 }
 
 export function Navbar() {
+  const assetBase = import.meta.env.BASE_URL;
   const [open, setOpen] = useState(false);
   const { setOpen: setBookingOpen } = useBookingModal();
 
@@ -168,7 +169,7 @@ export function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-3 group">
             <img
-              src="/logo-full-rose.png"
+              src={`${assetBase}logo-full-rose.png`}
               alt="BIB Clinic logo"
               className="h-10 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
             />

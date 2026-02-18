@@ -1,4 +1,5 @@
 export default function AboutPage() {
+  const assetBase = import.meta.env.BASE_URL;
   const credentials = [
     "Registered nurse",
     "Independent prescriber",
@@ -49,13 +50,13 @@ export default function AboutPage() {
             </p>
           </div>
           <img
-            src="/NurseWorking2.jpg"
+            src={`${assetBase}NurseWorking2.jpg`}
             alt="Nurse consultation with client at BIB Clinic"
             className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-64 sm:h-80 md:h-full animate-fade-in-up order-1 md:order-2"
           />
 
           <img
-            src="/ReceptionistSmiling.jpg"
+            src={`${assetBase}ReceptionistSmiling.jpg`}
             alt="Receptionist smiling at BIB Clinic"
             className="rounded-2xl shadow-md border border-[color:var(--silver)] object-cover w-full h-64 sm:h-80 md:h-full animate-fade-in-up order-3"
           />

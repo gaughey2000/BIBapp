@@ -35,6 +35,7 @@ function Expandable({ children, collapsedHeight = 140 }) {
 }
 
 export default function ServicesPage() {
+  const assetBase = import.meta.env.BASE_URL;
   const { setOpen: setBookingOpen } = useBookingModal();
   const sections = [
     { id: "anti-wrinkle", label: "Anti-Wrinkle" },
@@ -69,12 +70,12 @@ export default function ServicesPage() {
           </p>
           <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
             <img
-              src="/NurseInjectingClient.jpg"
+              src={`${assetBase}NurseInjectingClient.jpg`}
               alt="Treatment in progress"
               className="h-36 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />
             <img
-              src="/ClientSmillingAtResults.jpg"
+              src={`${assetBase}ClientSmillingAtResults.jpg`}
               alt="Client results"
               className="hidden sm:block h-36 sm:h-32 md:h-36 w-full object-cover rounded-2xl shadow-sm border border-slate-200/60"
             />

@@ -4,6 +4,7 @@ import { BOOKING_URL } from "../data";
 import { ReviewsCarousel, useBookingModal } from "../ui";
 
 export default function HomePage() {
+  const assetBase = import.meta.env.BASE_URL;
   const videoRef = useRef(null);
   const [muted, setMuted] = useState(true);
   const [paused, setPaused] = useState(false);
@@ -47,7 +48,7 @@ export default function HomePage() {
             <video
               ref={videoRef}
               className="h-full w-full object-cover"
-              src="/WelcomeVideo.mp4"
+              src={`${assetBase}WelcomeVideo.mp4`}
               autoPlay
               loop
               playsInline
