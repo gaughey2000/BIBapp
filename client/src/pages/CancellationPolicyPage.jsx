@@ -23,11 +23,23 @@ export default function CancellationPolicyPage() {
             care, the following cancellation policy applies:
           </p>
           <ul className="list-disc pl-6 text-gray-700 space-y-2">
-            <li>A £20 deposit is required at the time of booking to secure your appointment.</li>
-            <li>Appointments may be cancelled or rescheduled with a minimum of 24 hours’ notice.</li>
-            <li>Cancellations or changes made with less than 24 hours’ notice, or failure to attend an appointment, will result in the deposit being retained.</li>
-            <li>Deposits are deducted from the total cost of your treatment on the day of your appointment.</li>
-            <li>In exceptional circumstances, discretion may be applied at the clinic’s discretion.</li>
+            <li>
+              A £20 deposit is required at the time of booking to secure your
+              appointment.
+            </li>
+            <li>
+              Appointments may be cancelled or rescheduled with a minimum of 24
+              hours’ notice.
+            </li>
+            <li>
+              Cancellations or changes made with less than 24 hours’ notice, or
+              failure to attend an appointment, will result in the deposit being
+              retained.
+            </li>
+            <li>
+              Deposits are deducted from the total cost of your treatment on the
+              day of your appointment.
+            </li>
           </ul>
           <p className="text-gray-700 leading-relaxed">
             We appreciate your understanding and cooperation, which allows us to
