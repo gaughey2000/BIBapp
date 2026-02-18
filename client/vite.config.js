@@ -1,21 +1,26 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import tailwindcss from "@tailwindcss/vite";
 
-export default defineConfig({
-  plugins: [tailwindcss()],
-  esbuild: {
-    jsx: 'automatic',
-    jsxImportSource: 'react'
-  },
-  build: {
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom'],
-          router: ['react-router-dom']
-        }
-      }
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), "");
+
+  return {
+    base: env.VITE_BASE_PATH || "/",
+    plugins: [tailwindcss()],
+    esbuild: {
+      jsx: "automatic",
+      jsxImportSource: "react",
     },
-    chunkSizeWarningLimit: 1000
-  },
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            vendor: ["react", "react-dom"],
+            router: ["react-router-dom"],
+          },
+        },
+      },
+      chunkSizeWarningLimit: 1000,
+    },
+  };
 });
