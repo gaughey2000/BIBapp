@@ -1,9 +1,10 @@
 {
-    "name": "bib-root",
+  "name": "bib-root",
   "private": true,
   "scripts": {
     "dev": "npm -C client run dev",
     "build": "npm -C client run build",
+    "build:pages": "VITE_BASE_PATH=/BIBapp/ npm run build && rm -rf docs && mkdir -p docs && cp -R client/dist/* docs/ && touch docs/.nojekyll && cp docs/index.html docs/404.html",
     "install-all": "npm install && npm -C client install"
   },
   "devDependencies": {}

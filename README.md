@@ -49,10 +49,19 @@ This project is configured for static hosting with SPA routing support.
 3. Push to `main` (or run the workflow manually from `Actions`).
 4. The workflow builds the site, publishes `client/dist`, and handles SPA deep links.
 
+If your repository is currently set to `Deploy from a branch` with `/docs`, run:
+
+```bash
+npm run build:pages
+```
+
+and push the generated `docs/` folder.
+
 ### Notes
 
 - React Router deep links are handled via rewrite rules (Netlify/Vercel) and a `404.html` fallback (GitHub Pages).
 - For GitHub Pages project sites, the app base path is set automatically in CI using `VITE_BASE_PATH=/<repo-name>/`.
+- For this repo specifically, the project site base path is `/BIBapp/`.
 - No runtime environment variables are currently required for production.
 
 ## Project Map
